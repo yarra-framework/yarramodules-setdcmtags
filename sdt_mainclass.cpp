@@ -15,13 +15,16 @@ void sdtMainclass::perform(int argc, char *argv[])
 {
     cmdLine.addParam ("input",     "Folder with DICOM files to process",                OFCmdParam::PM_Mandatory);
     cmdLine.addParam ("output",    "Folder where modified DICOM files will be written", OFCmdParam::PM_Mandatory);
+    cmdLine.addParam ("rawfile",   "Path and name of raw-data file",                    OFCmdParam::PM_Mandatory);
 
-    cmdLine.addGroup("Processing options:");
-    cmdLine.addOption("--acc", "-a", 1, "number", "ACC Number");
+    cmdLine.addGroup("parameters:");
+    cmdLine.addOption("-a", "", 1, "", "Accession number");
+    cmdLine.addOption("-m", "", 1, "", "Path and name of mode file");
+    cmdLine.addOption("-d", "", 1, "", "Path and name of dynamic settings");
+    cmdLine.addOption("-l", "", 0, "", "Extended log output for debugging");
 
-
-    cmdLine.addGroup ("Other options:");
-    cmdLine.addOption("--version", "Show version information and exit",                 OFCommandLine::AF_Exclusive);
+    cmdLine.addGroup ("other options:");
+    cmdLine.addOption("-v", "Show version information and exit", OFCommandLine::AF_Exclusive);
 
     LOG("");
 
@@ -30,7 +33,7 @@ void sdtMainclass::perform(int argc, char *argv[])
     if (app.parseCommandLine(cmdLine, argc, argv))
     {
         // Output the version number without any other text, so that it can be parsed
-        if ((cmdLine.hasExclusiveOption()) && (cmdLine.findOption("--version")))
+        if ((cmdLine.hasExclusiveOption()) && (cmdLine.findOption("-v")))
         {
             LOG("Yarra SetDCMTags");
             LOG("");
