@@ -21,6 +21,15 @@ public:
     OFCommandLine cmdLine;
     OFConsoleApplication app;
 
+    OFCmdString inputDir;
+    OFCmdString outputDir;
+    OFCmdString rawFile;
+
+    OFCmdString accessionNumber;
+    OFCmdString modeFile;
+    OFCmdString dynamicSettingsFile;
+    bool        extendedLog;
+
     int returnValue;
 };
 
