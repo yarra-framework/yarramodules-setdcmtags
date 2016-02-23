@@ -3,11 +3,15 @@ TARGET = SetDCMTags
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    sdt_mainclass.cpp
+    sdt_mainclass.cpp \
+    external/mdfdsman.cc \
+    external/dcdictbi.cc
 
 HEADERS += \
     sdt_mainclass.h \
-    sdt_global.h
+    sdt_global.h \
+    external/mdfdsman.h
+
 
 DEFINES += HAVE_CONFIG_H
 DEFINES += USE_NULL_SAFE_OFSTRING

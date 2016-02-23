@@ -106,17 +106,30 @@ void sdtMainclass::perform(int argc, char *argv[])
             LOG("  Raw-data file    = " << rawFile            );
             LOG("  Accession number = " << accessionNumber    );
             LOG("  Mode file        = " << modeFile           );
-            LOG("  Dynamic Settings = " << dynamicSettingsFile);
+            LOG("  Dynamic settings = " << dynamicSettingsFile);
             LOG("");
-
-            // TODO: Output configuration
-
-
         }
     }
     else
     {
         LOG("ERROR: Unable to parse command line.");
+        return;
     }
+
+    // Test is given directories and filenames exist
+    if (!checkFolderExistence())
+    {
+        return;
+    }
+
 }
+
+
+bool sdtMainclass::checkFolderExistence()
+{
+    return true;
+}
+
+
+
 

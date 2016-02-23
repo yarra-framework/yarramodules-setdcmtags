@@ -17,6 +17,8 @@ public:
     void perform(int argc, char *argv[]);
     int getReturnValue();
 
+    bool checkFolderExistence();
+
     // Helper class for commandline parsing
     OFCommandLine cmdLine;
     OFConsoleApplication app;
