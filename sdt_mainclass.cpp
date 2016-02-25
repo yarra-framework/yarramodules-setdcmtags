@@ -3,6 +3,11 @@
 
 #include <iostream>
 
+#include <boost/filesystem.hpp>
+
+namespace fs = boost::filesystem;
+
+
 
 sdtMainclass::sdtMainclass()
     : app("SetDCMTags", "Set DICOM tags to values read from Siemens raw-data file")
@@ -119,15 +124,59 @@ void sdtMainclass::perform(int argc, char *argv[])
     // Test is given directories and filenames exist
     if (!checkFolderExistence())
     {
+        LOG("Check if parameters are correct");
+        LOG("");
         return;
     }
+
+    // Now parse the raw-data file and extract all needed information
+    if (!twixReader.readFile(std::string(rawFile.c_str())))
+    {
+        LOG("Error parsing raw-data file " << rawFile);
+        LOG("");
+        return;
+    }
+
+
 
 }
 
 
 bool sdtMainclass::checkFolderExistence()
 {
-    return true;
+    bool foldersExist=true;
+
+    if (!fs::is_directory(std::string(inputDir.c_str())))
+    {
+        LOG("ERROR: Unable to find input folder " << inputDir);
+        foldersExist=false;
+    }
+
+    if (!fs::is_directory(std::string(outputDir.c_str())))
+    {
+        LOG("ERROR: Unable to find output folder " << outputDir);
+        foldersExist=false;
+    }
+
+    if (!fs::exists(std::string(rawFile.c_str())))
+    {
+        LOG("ERROR: Unable to find raw file " << rawFile);
+        foldersExist=false;
+    }
+
+    if ((!modeFile.empty()) && (!fs::exists(std::string(modeFile.c_str()))))
+    {
+        LOG("ERROR: Unable to find mode file " << modeFile);
+        foldersExist=false;
+    }
+
+    if ((!dynamicSettingsFile.empty()) && (!fs::exists(std::string(dynamicSettingsFile.c_str()))))
+    {
+        LOG("ERROR: Unable to find dynamic settings file " << dynamicSettingsFile);
+        foldersExist=false;
+    }
+
+    return foldersExist;
 }
 
 

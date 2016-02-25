@@ -8,6 +8,8 @@
 #include "dcmtk/dcmdata/dctk.h"
 #include "dcmtk/ofstd/ofstd.h"
 
+#include "sdt_twixreader.h"
+
 
 class sdtMainclass
 {
@@ -31,6 +33,8 @@ public:
     OFCmdString modeFile;
     OFCmdString dynamicSettingsFile;
     bool        extendedLog;
+
+    sdtTWIXReader twixReader;
 
     int returnValue;
 };
