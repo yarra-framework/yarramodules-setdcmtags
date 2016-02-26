@@ -9,19 +9,31 @@
 #include "sdt_global.h"
 
 
+enum twixitemtype
+{
+    tSTRING=0,
+    tBOOL,
+    tLONG,
+    tDOUBLE
+};
+
+
 class sdtTWIXSearchItem
 {
 public:
-    sdtTWIXSearchItem(std::string newId, std::string newSearchString, bool isMandatory=true)
+
+    sdtTWIXSearchItem(std::string newId, std::string newSearchString, twixitemtype newType, bool isMandatory=true)
     {
         id=newId;
         searchString=newSearchString;
+        type=newType;
         mandatory=isMandatory;
     }
 
-    std::string id;
-    std::string searchString;
-    bool mandatory;
+    std::string  id;
+    std::string  searchString;
+    twixitemtype type;
+    bool         mandatory;
 };
 
 typedef std::vector<sdtTWIXSearchItem> sdtTwixSearchList;
@@ -45,9 +57,10 @@ public:
     std::string getValue(std::string id);
 
     void prepareSearchList();
-    void addSearchEntry(std::string id, std::string searchString);
+    void addSearchEntry(std::string id, std::string searchString, twixitemtype type, bool mandatory=true);
 
     bool readMRProt(std::ifstream& file);
+    void parseXProtLine(std::string& line, std::ifstream& file);
     void parseMRProtLine(std::string line);
 
     fileVersionType   fileVersion;
@@ -81,9 +94,9 @@ inline std::string sdtTWIXReader::getValue(std::string id)
 }
 
 
-inline void sdtTWIXReader::addSearchEntry(std::string id, std::string searchString)
+inline void sdtTWIXReader::addSearchEntry(std::string id, std::string searchString, twixitemtype type, bool mandatory)
 {
-    searchList.push_back(sdtTWIXSearchItem(id, searchString));
+    searchList.push_back(sdtTWIXSearchItem(id, searchString, type, mandatory));
 }
 
 

@@ -122,7 +122,7 @@ bool sdtTWIXReader::readFile(std::string filename)
             //std::cout << line << std::endl;
         }
 
-        //evaluateLine(line, file);
+        parseXProtLine(line, file);
 
         //if (searchList.empty())
         //{
@@ -145,6 +145,10 @@ bool sdtTWIXReader::readFile(std::string filename)
         return false;
     }
 
+    for(auto value : values)
+    {
+       std::cout << value.first << " = " << value.second << std::endl;
+    }
 
     return true;
 }
@@ -171,6 +175,9 @@ bool sdtTWIXReader::readMRProt(std::ifstream& file)
     return false;
 }
 
+static std::string sdt_wipKey_VB="sWiPMemBlock";
+static std::string sdt_wipKey_VD="sWipMemBlock";
+
 
 void sdtTWIXReader::parseMRProtLine(std::string line)
 {
@@ -187,6 +194,16 @@ void sdtTWIXReader::parseMRProtLine(std::string line)
 
     // Remove all whitespace from key
     key.erase(std::remove(key.begin(), key.end(), ' '), key.end());
+
+    // Replace the pre-VD "sWiPMemBlock" key with the VD name
+    if (key.find(sdt_wipKey_VB)!=std::string::npos)
+    {
+        key.replace(0,sdt_wipKey_VB.length(),sdt_wipKey_VD);
+    }
+
+    // Add prefix to key
+    key="mrprot."+key;
+
 
     line.erase(0,equalPos+1);
     std::string value=line;
@@ -206,17 +223,101 @@ void sdtTWIXReader::parseMRProtLine(std::string line)
         }
     }
 
-    // Add prefix to key
-    key="mrprot."+key;
-
-    LOG("<" << key << "> = <" << value << ">");
+    //LOG("<" << key << "> = <" << value << ">");
 
     // Store in results table
     values[key]=value;
 }
 
 
+void sdtTWIXReader::parseXProtLine(std::string& line, std::ifstream& file)
+{
+    int indexFound=-1;
+    int searchPos=std::string::npos;
+
+    for (int i=0; i<searchList.size(); i++)
+    {
+        searchPos=line.find(searchList.at(i).searchString);
+
+        if (searchPos!=std::string::npos)
+        {
+            // Get value from line and write into result array
+            std::string key=searchList.at(i).id;
+            std::string value=line;
+
+            value.erase(0,searchPos+searchList.at(i).searchString.length());
+
+            // TODO: Search for enclosing { }
+
+            // TODO: Distinguish between different cases (string, float, double)
+
+            int quotePos=value.find("\"");
+
+            if (quotePos==std::string::npos)
+            {
+                // If the line does not contain quotation marks, the value might be in the next line
+
+                // TODO: Read two additional lines from the file
+
+            } else
+            {
+                // Delete the quotation marks including preceeding white space
+                value.erase(0,quotePos+1);
+            }
+
+            // Remove the trailing quotation mark if it exists
+            quotePos=value.find("\"");
+            if (quotePos!=std::string::npos)
+            {
+                value.erase(quotePos);
+            }
+
+            //std::cout << value << std::endl;
+
+            values[key]=value;
+
+            indexFound=i;
+            break;
+        }
+    }
+
+    // Remove entry from search list
+    if (indexFound>=0)
+    {
+        searchList.erase(searchList.begin()+indexFound);
+    }
+}
+
+
+
 void sdtTWIXReader::prepareSearchList()
 {
+    addSearchEntry("PatientName",                "<ParamString.\"tPatientName\">"          , tSTRING);
+    addSearchEntry("PatientID",                  "<ParamString.\"PatientID\">"             , tSTRING);
+    addSearchEntry("ProtocolName",               "<ParamString.\"tProtocolName\">"         , tSTRING);
+    addSearchEntry("SequenceString",             "<ParamString.\"SequenceString\">"        , tSTRING);
+
+    addSearchEntry("SoftwareVersions",           "<ParamString.\"SoftwareVersions\">"      , tSTRING);
+    addSearchEntry("Manufacturer",               "<ParamString.\"Manufacturer\">"          , tSTRING);
+    addSearchEntry("ManufacturersModelName",     "<ParamString.\"ManufacturersModelName\">", tSTRING);
+    addSearchEntry("LongModelName",              "<ParamString.\"LongModelName\">"         , tSTRING);
+
+    addSearchEntry("DeviceSerialNumber",         "<ParamString.\"DeviceSerialNumber\">"    , tSTRING);
+    addSearchEntry("InstitutionAddress",         "<ParamString.\"InstitutionAddress\">"    , tSTRING);
+    addSearchEntry("InstitutionName",            "<ParamString.\"InstitutionName\">"       , tSTRING);
+    addSearchEntry("Modality",                   "<ParamString.\"Modality\">"              , tSTRING);
+
+    addSearchEntry("SequenceVariant",            "<ParamString.\"tSequenceVariant\">"      , tSTRING);
+    addSearchEntry("ScanningSequence",           "<ParamString.\"tScanningSequence\">"     , tSTRING);
+    addSearchEntry("ScanOptions",                "<ParamString.\"tScanOptions\">"          , tSTRING);
+    addSearchEntry("MRAcquisitionType",          "<ParamString.\"tMRAcquisitionType\">"    , tSTRING);
+
+    addSearchEntry("BolusAgent",                 "<ParamString.\"BolusAgent\">"            , tSTRING);
+
+
     // TODO
+    //<ParamDouble."flMagneticFieldStrength">  { <Precision> 6  1.494000  }
+    //<ParamDouble."ContrastBolusVolume">  { <Precision> 16  9.0000000000000000  }
+
+
 }
