@@ -74,6 +74,7 @@ public:
     std::string errorReason;
 
     void removeQuotationMarks(std::string& line);
+    void removeWhitespace(std::string& line);
 
 };
 

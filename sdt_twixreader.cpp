@@ -305,6 +305,13 @@ void sdtTWIXReader::removeQuotationMarks(std::string& line)
 }
 
 
+void sdtTWIXReader::removeWhitespace(std::string& line)
+{
+    // TODO
+}
+
+
+
 void sdtTWIXReader::prepareSearchList()
 {
     addSearchEntry("PatientName",                "<ParamString.\"tPatientName\">"          , tSTRING);
