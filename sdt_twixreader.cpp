@@ -289,6 +289,21 @@ void sdtTWIXReader::parseXProtLine(std::string& line, std::ifstream& file)
 }
 
 
+void sdtTWIXReader::removeQuotationMarks(std::string& line)
+{
+    // Check if the string has a quotation mark at the start
+    if (line[0]=='"')
+    {
+        line.erase(0,1);
+
+        // Check if there is also a trailing quotation mark
+        if (line[line.length()-1]=='"')
+        {
+            line.erase(line.length()-1,1);
+        }
+    }
+}
+
 
 void sdtTWIXReader::prepareSearchList()
 {

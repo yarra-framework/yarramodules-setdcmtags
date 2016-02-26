@@ -72,6 +72,9 @@ public:
     uint64_t headerEnd;
 
     std::string errorReason;
+
+    void removeQuotationMarks(std::string& line);
+
 };
 
 
