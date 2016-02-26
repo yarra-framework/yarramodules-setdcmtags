@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 
 sdtTWIXReader::sdtTWIXReader()
@@ -128,11 +129,10 @@ bool sdtTWIXReader::readFile(std::string filename)
         //    terminateParsing=true;
         //}
 
-        // Terminate the parsing once the acquisiton protocol is reached
+        // When the MRProt section is reached, parse it and terminate
         if (line.find("### ASCCONV BEGIN ###")!=std::string::npos)
         {
             readMRProt(file);
-
             terminateParsing=true;
         }
     }
@@ -157,23 +157,62 @@ bool sdtTWIXReader::readMRProt(std::ifstream& file)
         std::string line="";
         std::getline(file, line);
 
-        //TODO
-        //evaluateLine(line, file);
-
         // Terminate once the end of the mrprot section is reached
         if (line.find("### ASCCONV END ###")!=std::string::npos)
         {
             return true;
         }
 
-        if (!line.empty())
-        {
-            std::cout << line << std::endl;
-        }
+        parseMRProtLine(line);
 
+        //std::cout << line << std::endl;
     }
 
     return false;
+}
+
+
+void sdtTWIXReader::parseMRProtLine(std::string line)
+{
+    size_t equalPos=line.find("=");
+
+    if (equalPos==std::string::npos)
+    {
+        LOG("WARNING: Invalid MR Prot line found: " << line);
+        return;
+    }
+
+    // Get everything before the "=" separator
+    std::string key=line.substr(0,equalPos-1);
+
+    // Remove all whitespace from key
+    key.erase(std::remove(key.begin(), key.end(), ' '), key.end());
+
+    line.erase(0,equalPos+1);
+    std::string value=line;
+
+    // Remove leading white space from value
+    value.erase(value.begin(), std::find_if(value.begin(), value.end(), std::bind1st(std::not_equal_to<char>(), ' ')));
+
+    // Check if the value string is enclosed by quotation marks
+    if (value[0]=='"')
+    {
+        value.erase(0,1);
+
+        // Check for trailing quotation mark
+        if (value[value.length()-1]=='"')
+        {
+            value.erase(value.length()-1,1);
+        }
+    }
+
+    // Add prefix to key
+    key="mrprot."+key;
+
+    LOG("<" << key << "> = <" << value << ">");
+
+    // Store in results table
+    values[key]=value;
 }
 
 

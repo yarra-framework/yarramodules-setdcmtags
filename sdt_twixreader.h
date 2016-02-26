@@ -12,14 +12,16 @@
 class sdtTWIXSearchItem
 {
 public:
-    sdtTWIXSearchItem(std::string newId, std::string newSearchString)
+    sdtTWIXSearchItem(std::string newId, std::string newSearchString, bool isMandatory=true)
     {
         id=newId;
         searchString=newSearchString;
+        mandatory=isMandatory;
     }
 
     std::string id;
     std::string searchString;
+    bool mandatory;
 };
 
 typedef std::vector<sdtTWIXSearchItem> sdtTwixSearchList;
@@ -46,14 +48,15 @@ public:
     void addSearchEntry(std::string id, std::string searchString);
 
     bool readMRProt(std::ifstream& file);
+    void parseMRProtLine(std::string line);
 
     fileVersionType   fileVersion;
     sdtTwixSearchList searchList;
     std::map<std::string, std::string> values;
 
-    uint64_t         lastMeasOffset;
-    uint32_t         headerLength;
-    uint64_t         headerEnd;
+    uint64_t lastMeasOffset;
+    uint32_t headerLength;
+    uint64_t headerEnd;
 
     std::string errorReason;
 };
