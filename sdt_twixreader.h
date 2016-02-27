@@ -63,6 +63,10 @@ public:
     void parseXProtLine(std::string& line, std::ifstream& file);
     void parseMRProtLine(std::string line);
 
+    void removeQuotationMarks(std::string& line);
+    void removeLeadingWhitespace(std::string& line);
+    void findBraces(std::string& line, std::ifstream& file);
+
     fileVersionType   fileVersion;
     sdtTwixSearchList searchList;
     std::map<std::string, std::string> values;
@@ -72,9 +76,6 @@ public:
     uint64_t headerEnd;
 
     std::string errorReason;
-
-    void removeQuotationMarks(std::string& line);
-    void removeWhitespace(std::string& line);
 
 };
 

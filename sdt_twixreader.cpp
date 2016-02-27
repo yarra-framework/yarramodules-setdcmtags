@@ -204,24 +204,15 @@ void sdtTWIXReader::parseMRProtLine(std::string line)
     // Add prefix to key
     key="mrprot."+key;
 
-
+    // Get everything past the "=" character
     line.erase(0,equalPos+1);
     std::string value=line;
 
     // Remove leading white space from value
-    value.erase(value.begin(), std::find_if(value.begin(), value.end(), std::bind1st(std::not_equal_to<char>(), ' ')));
+    removeLeadingWhitespace(value);
 
     // Check if the value string is enclosed by quotation marks
-    if (value[0]=='"')
-    {
-        value.erase(0,1);
-
-        // Check for trailing quotation mark
-        if (value[value.length()-1]=='"')
-        {
-            value.erase(value.length()-1,1);
-        }
-    }
+    removeQuotationMarks(value);
 
     //LOG("<" << key << "> = <" << value << ">");
 
@@ -233,9 +224,9 @@ void sdtTWIXReader::parseMRProtLine(std::string line)
 void sdtTWIXReader::parseXProtLine(std::string& line, std::ifstream& file)
 {
     int indexFound=-1;
-    int searchPos=std::string::npos;
+    size_t searchPos=std::string::npos;
 
-    for (int i=0; i<searchList.size(); i++)
+    for (size_t i=0; i<searchList.size(); i++)
     {
         searchPos=line.find(searchList.at(i).searchString);
 
@@ -247,11 +238,12 @@ void sdtTWIXReader::parseXProtLine(std::string& line, std::ifstream& file)
 
             value.erase(0,searchPos+searchList.at(i).searchString.length());
 
-            // TODO: Search for enclosing { }
+            // Search for enclosing {}
+            findBraces(value, file);
 
             // TODO: Distinguish between different cases (string, float, double)
 
-            int quotePos=value.find("\"");
+            size_t quotePos=value.find("\"");
 
             if (quotePos==std::string::npos)
             {
@@ -305,11 +297,23 @@ void sdtTWIXReader::removeQuotationMarks(std::string& line)
 }
 
 
-void sdtTWIXReader::removeWhitespace(std::string& line)
+void sdtTWIXReader::removeLeadingWhitespace(std::string& line)
 {
-    // TODO
+    line.erase(line.begin(), std::find_if(line.begin(), line.end(), std::bind1st(std::not_equal_to<char>(), ' ')));
 }
 
+
+void sdtTWIXReader::findBraces(std::string& line, std::ifstream& file)
+{
+    while ((!file.eof()) && (line.find("}")==std::string::npos))
+    {
+        std::string nextLine;
+        std::getline(file, nextLine);
+        line += nextLine;
+    }
+
+    // TODO
+}
 
 
 void sdtTWIXReader::prepareSearchList()
