@@ -241,30 +241,33 @@ void sdtTWIXReader::parseXProtLine(std::string& line, std::ifstream& file)
             // Search for enclosing {}
             findBraces(value, file);
 
-            // TODO: Distinguish between different cases (string, float, double)
-
-            size_t quotePos=value.find("\"");
-
-            if (quotePos==std::string::npos)
+            switch (searchList.at(i).type)
             {
-                // If the line does not contain quotation marks, the value might be in the next line
+            case tSTRING:
+            default:
+                removeEnclosingWhitespace(value);
+                removeQuotationMarks(value);
+                break;
 
-                // TODO: Read two additional lines from the file
+            case tBOOL:
+                if (value.find("true")!=std::string::npos)
+                {
+                    value="true";
+                }
+                else
+                {
+                    value="false";
+                }
+                break;
 
-            } else
-            {
-                // Delete the quotation marks including preceeding white space
-                value.erase(0,quotePos+1);
+            case tLONG:
+                removeEnclosingWhitespace(value);
+                break;
+
+            case tDOUBLE:
+                // TODO
+                break;
             }
-
-            // Remove the trailing quotation mark if it exists
-            quotePos=value.find("\"");
-            if (quotePos!=std::string::npos)
-            {
-                value.erase(quotePos);
-            }
-
-            //std::cout << value << std::endl;
 
             values[key]=value;
 
@@ -303,16 +306,38 @@ void sdtTWIXReader::removeLeadingWhitespace(std::string& line)
 }
 
 
+void sdtTWIXReader::removeEnclosingWhitespace(std::string& line)
+{
+    removeLeadingWhitespace(line);
+    line.erase(std::find_if(line.rbegin(), line.rend(), std::bind1st(std::not_equal_to<char>(), ' ')).base(), line.end());
+}
+
+
 void sdtTWIXReader::findBraces(std::string& line, std::ifstream& file)
 {
-    while ((!file.eof()) && (line.find("}")==std::string::npos))
+    while ((!file.eof()) && (file.tellg()<headerEnd) && (line.find("}")==std::string::npos))
     {
         std::string nextLine;
         std::getline(file, nextLine);
         line += nextLine;
     }
 
-    // TODO
+    size_t openBracePos=line.find("{");
+
+    if (openBracePos!=std::string::npos)
+    {
+        // Delete the quotation marks including preceeding white space
+        line.erase(0,openBracePos+1);
+    } else
+    {
+        LOG("WARNING: Incorrect format " << line);
+    }
+
+    size_t trailingBracePos=line.find("}");
+    if (trailingBracePos!=std::string::npos)
+    {
+        line.erase(trailingBracePos);
+    }
 }
 
 
