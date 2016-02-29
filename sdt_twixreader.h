@@ -66,6 +66,7 @@ public:
     void removeQuotationMarks(std::string& line);
     void removeLeadingWhitespace(std::string& line);
     void removeEnclosingWhitespace(std::string& line);
+    void removePrecisionTag(std::string& line);
     void findBraces(std::string& line, std::ifstream& file);
 
     fileVersionType   fileVersion;

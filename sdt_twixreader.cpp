@@ -265,7 +265,7 @@ void sdtTWIXReader::parseXProtLine(std::string& line, std::ifstream& file)
                 break;
 
             case tDOUBLE:
-                // TODO
+                removePrecisionTag(value);
                 break;
             }
 
@@ -313,6 +313,29 @@ void sdtTWIXReader::removeEnclosingWhitespace(std::string& line)
 }
 
 
+void sdtTWIXReader::removePrecisionTag(std::string& line)
+{
+    std::string tag="<Precision> ";
+
+    // First search and remove the tag
+    size_t tagPos=line.find(tag);
+    if (line.find(tag)!=std::string::npos)
+    {
+        line.erase(0,tagPos+tag.length());
+    }
+
+    // Now find the space separator and remove the precision number
+    size_t sepPos=line.find(" ");
+    if (sepPos!=std::string::npos)
+    {
+        line.erase(0,sepPos);
+    }
+
+    // Remove the whitespace around the actual value
+    removeEnclosingWhitespace(line);
+}
+
+
 void sdtTWIXReader::findBraces(std::string& line, std::ifstream& file)
 {
     while ((!file.eof()) && (file.tellg()<headerEnd) && (line.find("}")==std::string::npos))
@@ -343,32 +366,28 @@ void sdtTWIXReader::findBraces(std::string& line, std::ifstream& file)
 
 void sdtTWIXReader::prepareSearchList()
 {
-    addSearchEntry("PatientName",                "<ParamString.\"tPatientName\">"          , tSTRING);
-    addSearchEntry("PatientID",                  "<ParamString.\"PatientID\">"             , tSTRING);
-    addSearchEntry("ProtocolName",               "<ParamString.\"tProtocolName\">"         , tSTRING);
-    addSearchEntry("SequenceString",             "<ParamString.\"SequenceString\">"        , tSTRING);
+    addSearchEntry("PatientName",                "<ParamString.\"tPatientName\">"           , tSTRING);
+    addSearchEntry("PatientID",                  "<ParamString.\"PatientID\">"              , tSTRING);
+    addSearchEntry("ProtocolName",               "<ParamString.\"tProtocolName\">"          , tSTRING);
+    addSearchEntry("SequenceString",             "<ParamString.\"SequenceString\">"         , tSTRING);
 
-    addSearchEntry("SoftwareVersions",           "<ParamString.\"SoftwareVersions\">"      , tSTRING);
-    addSearchEntry("Manufacturer",               "<ParamString.\"Manufacturer\">"          , tSTRING);
-    addSearchEntry("ManufacturersModelName",     "<ParamString.\"ManufacturersModelName\">", tSTRING);
-    addSearchEntry("LongModelName",              "<ParamString.\"LongModelName\">"         , tSTRING);
+    addSearchEntry("SoftwareVersions",           "<ParamString.\"SoftwareVersions\">"       , tSTRING);
+    addSearchEntry("Manufacturer",               "<ParamString.\"Manufacturer\">"           , tSTRING);
+    addSearchEntry("ManufacturersModelName",     "<ParamString.\"ManufacturersModelName\">" , tSTRING);
+    addSearchEntry("LongModelName",              "<ParamString.\"LongModelName\">"          , tSTRING);
+    addSearchEntry("MagneticFieldStrength",      "<ParamDouble.\"flMagneticFieldStrength\">", tDOUBLE);
 
-    addSearchEntry("DeviceSerialNumber",         "<ParamString.\"DeviceSerialNumber\">"    , tSTRING);
-    addSearchEntry("InstitutionAddress",         "<ParamString.\"InstitutionAddress\">"    , tSTRING);
-    addSearchEntry("InstitutionName",            "<ParamString.\"InstitutionName\">"       , tSTRING);
-    addSearchEntry("Modality",                   "<ParamString.\"Modality\">"              , tSTRING);
+    addSearchEntry("DeviceSerialNumber",         "<ParamString.\"DeviceSerialNumber\">"     , tSTRING);
+    addSearchEntry("InstitutionAddress",         "<ParamString.\"InstitutionAddress\">"     , tSTRING);
+    addSearchEntry("InstitutionName",            "<ParamString.\"InstitutionName\">"        , tSTRING);
+    addSearchEntry("Modality",                   "<ParamString.\"Modality\">"               , tSTRING);
 
-    addSearchEntry("SequenceVariant",            "<ParamString.\"tSequenceVariant\">"      , tSTRING);
-    addSearchEntry("ScanningSequence",           "<ParamString.\"tScanningSequence\">"     , tSTRING);
-    addSearchEntry("ScanOptions",                "<ParamString.\"tScanOptions\">"          , tSTRING);
-    addSearchEntry("MRAcquisitionType",          "<ParamString.\"tMRAcquisitionType\">"    , tSTRING);
+    addSearchEntry("SequenceVariant",            "<ParamString.\"tSequenceVariant\">"       , tSTRING);
+    addSearchEntry("ScanningSequence",           "<ParamString.\"tScanningSequence\">"      , tSTRING);
+    addSearchEntry("ScanOptions",                "<ParamString.\"tScanOptions\">"           , tSTRING);
+    addSearchEntry("MRAcquisitionType",          "<ParamString.\"tMRAcquisitionType\">"     , tSTRING);
 
-    addSearchEntry("BolusAgent",                 "<ParamString.\"BolusAgent\">"            , tSTRING);
-
-
-    // TODO
-    //<ParamDouble."flMagneticFieldStrength">  { <Precision> 6  1.494000  }
-    //<ParamDouble."ContrastBolusVolume">  { <Precision> 16  9.0000000000000000  }
-
-
+    addSearchEntry("BolusAgent",                 "<ParamString.\"BolusAgent\">"             , tSTRING);
+    addSearchEntry("ContrastBolusVolume",        "<ParamDouble.\"ContrastBolusVolume\">"    , tDOUBLE);
 }
+

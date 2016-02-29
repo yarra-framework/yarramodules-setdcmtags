@@ -133,6 +133,7 @@ void sdtMainclass::perform(int argc, char *argv[])
     if (!twixReader.readFile(std::string(rawFile.c_str())))
     {
         LOG("Error parsing raw-data file " << rawFile);
+        LOG("Reason: " << twixReader.errorReason);
         LOG("");
         return;
     }
