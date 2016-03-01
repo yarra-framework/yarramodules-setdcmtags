@@ -145,10 +145,12 @@ bool sdtTWIXReader::readFile(std::string filename)
         return false;
     }
 
+    /*
     for(auto value : values)
     {
        std::cout << value.first << " = " << value.second << std::endl;
     }
+    */
 
     return true;
 }

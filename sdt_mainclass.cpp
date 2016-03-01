@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <boost/filesystem.hpp>
+#include <boost/range/iterator_range.hpp>
 
 namespace fs = boost::filesystem;
 
@@ -20,6 +21,8 @@ sdtMainclass::sdtMainclass()
     modeFile="";
     dynamicSettingsFile="";
     extendedLog=false;
+
+    series.clear();
 
     returnValue=0;
 }
@@ -138,8 +141,12 @@ void sdtMainclass::perform(int argc, char *argv[])
         return;
     }
 
-
-
+    if (!generateFileList())
+    {
+        LOG("Error while parsing input folder");
+        LOG("");
+        return;
+    }
 }
 
 
@@ -181,5 +188,84 @@ bool sdtMainclass::checkFolderExistence()
 }
 
 
+bool sdtMainclass::generateFileList()
+{
+    bool       success   =true;
+    seriesmode seriesMode=NOT_DEFINED;
 
+    fs::path   inputPath(std::string(inputDir.c_str()));
+
+    int series     =0;
+    int slice      =0;
+    seriesmode mode=NOT_DEFINED;
+
+    for(const auto &dir_entry : boost::make_iterator_range(fs::directory_iterator(inputPath), {}))
+    {
+        if (dir_entry.path().extension() == ".dcm")
+        {
+            success=parseFilename(dir_entry.path().stem().string(), mode, series, slice);
+
+            //std::cout << "File: " << dir_entry.path().string() << "  Series: " << series << "  Slice: " << slice << std::endl;
+
+            if (!success)
+            {
+                break;
+            }
+        }
+    }
+
+    return success;
+}
+
+
+bool sdtMainclass::parseFilename(std::string filename, seriesmode& mode, int& series, int& slice)
+{
+    series=0;
+    slice=0;
+
+    // Detect if the filename is of from slice[no].dcm or series[no].slice[no].dcm
+    seriesmode neededMode=SINGLE_SERIES;
+
+    size_t dotPos=filename.find('.');
+
+    if (dotPos!=std::string::npos)
+    {
+        neededMode=MULTI_SERIES;
+    }
+
+    if (mode==NOT_DEFINED)
+    {
+        mode=neededMode;
+    }
+    else
+    {
+        if (mode!=neededMode)
+        {
+            std::cout << "ERROR: Inconsistent naming of DICOM files detected." << std::endl;
+            std::cout << "ERROR: All DICOMs need to be names either slice[#].dcm or series[#].slice[#].dcm." << std::endl;
+            return false;
+        }
+    }
+
+    std::string tmpSlice=filename;
+
+    if (mode==MULTI_SERIES)
+    {
+        std::string tmpSeries=filename;
+
+        // Split into series and slice at the dot
+        tmpSeries.erase(dotPos, std::string::npos);
+        tmpSlice.erase(0,dotPos+1);
+
+        // Remove all characters and keep only numbers
+        tmpSeries.erase(std::remove_if(tmpSeries.begin(),tmpSeries.end(),isalpha),tmpSeries.end());
+        series=atoi(tmpSeries.c_str());
+    }
+
+    // Remove all characters and keep only numbers
+    tmpSlice.erase(std::remove_if(tmpSlice.begin(),tmpSlice.end(),isalpha),tmpSlice.end());
+    slice=atoi(tmpSlice.c_str());
+
+    return true;
+}
 

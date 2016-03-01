@@ -11,30 +11,51 @@
 #include "sdt_twixreader.h"
 
 
+class sdtSeriesInfo
+{
+    int                        number;
+    std::string                uid;
+    std::map<int, std::string> files;
+};
+
+
 class sdtMainclass
 {
 public:
+
+    enum seriesmode {
+        NOT_DEFINED  =-1,
+        SINGLE_SERIES= 0,
+        MULTI_SERIES = 1
+    };
+
     sdtMainclass();
 
     void perform(int argc, char *argv[]);
     int getReturnValue();
 
     bool checkFolderExistence();
+    bool generateFileList();
+    bool parseFilename(std::string filename, seriesmode& mode, int& series, int& slice);
 
     // Helper class for commandline parsing
-    OFCommandLine cmdLine;
+    OFCommandLine        cmdLine;
     OFConsoleApplication app;
 
-    OFCmdString inputDir;
-    OFCmdString outputDir;
-    OFCmdString rawFile;
+    // Settings from commandline parameters
+    OFCmdString          inputDir;
+    OFCmdString          outputDir;
+    OFCmdString          rawFile;
 
-    OFCmdString accessionNumber;
-    OFCmdString modeFile;
-    OFCmdString dynamicSettingsFile;
-    bool        extendedLog;
+    OFCmdString          accessionNumber;
+    OFCmdString          modeFile;
+    OFCmdString          dynamicSettingsFile;
+    bool                 extendedLog;
 
-    sdtTWIXReader twixReader;
+    // Helper class to parse TWIX files
+    sdtTWIXReader        twixReader;
+
+    std::vector<sdtSeriesInfo> series;
 
     int returnValue;
 };

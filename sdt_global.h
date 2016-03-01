@@ -7,6 +7,8 @@
 
 #define LOG(x) std::cout << x << std::endl;
 
+typedef std::vector<std::string> stringlist;
+
 
 #endif // SDT_GLOBAL_H
 
