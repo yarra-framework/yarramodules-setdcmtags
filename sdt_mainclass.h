@@ -9,13 +9,14 @@
 #include "dcmtk/ofstd/ofstd.h"
 
 #include "sdt_twixreader.h"
+#include "sdt_tagmapping.h"
 
 
 class sdtSeriesInfo
 {
-    int                        number;
+public:
     std::string                uid;
-    std::map<int, std::string> files;
+    std::map<int, std::string> sliceMap;
 };
 
 
@@ -30,6 +31,7 @@ public:
     };
 
     sdtMainclass();
+    ~sdtMainclass();
 
     void perform(int argc, char *argv[]);
     int getReturnValue();
@@ -37,6 +39,9 @@ public:
     bool checkFolderExistence();
     bool generateFileList();
     bool parseFilename(std::string filename, seriesmode& mode, int& series, int& slice);
+
+    bool generateUIDs();
+
 
     // Helper class for commandline parsing
     OFCommandLine        cmdLine;
@@ -55,7 +60,11 @@ public:
     // Helper class to parse TWIX files
     sdtTWIXReader        twixReader;
 
-    std::vector<sdtSeriesInfo> series;
+    // Helper class for assinging the DICOM tags
+    sdtTagMapping        tagMapping;
+
+    // Map to store all series information
+    std::map<int, sdtSeriesInfo> seriesMap;
 
     int returnValue;
 };

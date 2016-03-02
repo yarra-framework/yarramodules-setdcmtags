@@ -22,9 +22,15 @@ sdtMainclass::sdtMainclass()
     dynamicSettingsFile="";
     extendedLog=false;
 
-    series.clear();
+    seriesMap.clear();
 
     returnValue=0;
+}
+
+
+sdtMainclass::~sdtMainclass()
+{
+    LOG("");
 }
 
 
@@ -63,7 +69,6 @@ void sdtMainclass::perform(int argc, char *argv[])
             LOG("");
             LOG("Version:  "  << SDT_VERSION);
             LOG("Build on: " << __DATE__ << " " << __TIME__);
-            LOG("");
             return;
         }
 
@@ -128,7 +133,6 @@ void sdtMainclass::perform(int argc, char *argv[])
     if (!checkFolderExistence())
     {
         LOG("Check if parameters are correct");
-        LOG("");
         return;
     }
 
@@ -137,16 +141,38 @@ void sdtMainclass::perform(int argc, char *argv[])
     {
         LOG("Error parsing raw-data file " << rawFile);
         LOG("Reason: " << twixReader.errorReason);
-        LOG("");
         return;
     }
 
     if (!generateFileList())
     {
         LOG("Error while parsing input folder");
-        LOG("");
         return;
     }
+
+    // Generate UIDs for all series
+    if (!generateUIDs())
+    {
+        LOG("Error while parsing input folder");
+        return;
+    }
+
+    // Read the settings from the mode file and/or dynamic-settings file (if provided)
+    tagMapping.readConfiguration(std::string(modeFile.c_str()),std::string(dynamicSettingsFile.c_str()));
+    tagMapping.setupGlobalConfiguration();
+
+    // TODO: Loop over all series and process DICOM files
+
+    LOG("Done.");
+}
+
+
+
+bool sdtMainclass::generateUIDs()
+{
+    // TODO
+
+    return true;
 }
 
 
@@ -203,6 +229,7 @@ bool sdtMainclass::generateFileList()
     {
         if (dir_entry.path().extension() == ".dcm")
         {
+            // Extract the slice and series number from the filename
             success=parseFilename(dir_entry.path().stem().string(), mode, series, slice);
 
             //std::cout << "File: " << dir_entry.path().string() << "  Series: " << series << "  Slice: " << slice << std::endl;
@@ -211,8 +238,25 @@ bool sdtMainclass::generateFileList()
             {
                 break;
             }
+            else
+            {
+                // Store the filename in the series and slice mapping
+                seriesMap[series].sliceMap[slice]=dir_entry.path().filename().string();
+            }
         }
     }
+
+    /* // DEBUG: For outputting file list
+    for(auto entry : seriesMap)
+    {
+        std::cout << "Series " << entry.first << " ## " << std::endl;
+
+        for(auto file : entry.second.sliceMap)
+        {
+            std::cout << "  " << file.first << " = " << file.second << std::endl;
+        }
+    }
+    */
 
     return success;
 }
