@@ -1,5 +1,4 @@
 #include "sdt_tagmapping.h"
-#include "sdt_global.h"
 
 #include <boost/foreach.hpp>
 
@@ -31,7 +30,7 @@ void sdtTagMapping::readConfiguration(std::string modeFilename, std::string dyna
         {
             pt::read_ini(modeFilename, modeFile);
         }
-        catch(const boost::property_tree::ptree_error &e)
+        catch(const pt::ptree_error &e)
         {
             LOG("ERROR: Unable to read mode file -- " << e.what());
         }
@@ -44,7 +43,7 @@ void sdtTagMapping::readConfiguration(std::string modeFilename, std::string dyna
         {
             pt::read_ini(dynamicFilename, dynamicFile);
         }
-        catch(const boost::property_tree::ptree_error &e)
+        catch(const pt::ptree_error &e)
         {
             LOG("ERROR: Unable to read dynamic settings file -- " << e.what());
         }
@@ -57,7 +56,7 @@ void sdtTagMapping::setupGlobalConfiguration()
     // Evaluate global configuration read from mode file. This will add or overwrite the default mapping
     try
     {
-        BOOST_FOREACH(boost::property_tree::ptree::value_type &v, modeFile.get_child("SetDCMTags"))
+        BOOST_FOREACH(pt::ptree::value_type &v, modeFile.get_child("SetDCMTags"))
         {
             std::string key=v.first.data();
             std::string value=v.second.data();
@@ -78,11 +77,10 @@ void sdtTagMapping::setupGlobalConfiguration()
         // Ini section has not been defined / no entries
     }
 
-
     // Read dynamic configuration from dynamic file. This will add or overwrite entries from the mode file
     try
     {
-        BOOST_FOREACH(boost::property_tree::ptree::value_type &v, dynamicFile.get_child("SetDCMTags"))
+        BOOST_FOREACH(pt::ptree::value_type &v, dynamicFile.get_child("SetDCMTags"))
         {
             std::string key=v.first.data();
             std::string value=v.second.data();
@@ -117,7 +115,7 @@ void sdtTagMapping::setupSeriesConfiguration(int series)
     // Read series configuration from mode file (adding to or overwriting global configuration)
     try
     {
-        BOOST_FOREACH(boost::property_tree::ptree::value_type &v, modeFile.get_child(sectionName))
+        BOOST_FOREACH(pt::ptree::value_type &v, modeFile.get_child(sectionName))
         {
             std::string key=v.first.data();
             std::string value=v.second.data();
@@ -138,11 +136,10 @@ void sdtTagMapping::setupSeriesConfiguration(int series)
         // Ini section has not been defined / no entries
     }
 
-
     // Read series configuration from dynamic file
     try
     {
-        BOOST_FOREACH(boost::property_tree::ptree::value_type &v, dynamicFile.get_child(sectionName))
+        BOOST_FOREACH(pt::ptree::value_type &v, dynamicFile.get_child(sectionName))
         {
             std::string key=v.first.data();
             std::string value=v.second.data();
@@ -161,7 +158,6 @@ void sdtTagMapping::setupSeriesConfiguration(int series)
     catch (const std::exception&)
     {
     }
-
 
     evaluateSeriesOptions(series);
 }

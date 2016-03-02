@@ -193,16 +193,30 @@ bool sdtMainclass::generateUIDs()
 
 bool sdtMainclass::processSeries()
 {
+    // Give tagWriter access to the results from TWIX reader
+    tagWriter.setTWIXReader(&twixReader);
+
+    // Set folder for reading and writing the DICOMs
+    tagWriter.setFolders(std::string(inputDir.c_str()), std::string(outputDir.c_str()));
+
+    // Loop over all series
     for (auto series : seriesMap)
     {
         int seriesID=series.first;
-
         tagMapping.setupSeriesConfiguration(seriesID);
 
+        // Loop over all slices of series
         for (auto slice : series.second.sliceMap)
         {
-            // TODO: Process the individual files
-            // std::cout << "  " << file.first << " = " << file.second << std::endl;
+            // Inform helper class about current file name and slice/series counters
+            tagWriter.setFile(slice.second, slice.first, seriesID, series.second.uid);
+            tagWriter.setMapping(&tagMapping.currentTags, &tagMapping.currentOptions);
+
+            if (!tagWriter.processFile())
+            {
+                LOG("ERROR: Unable to process file " << slice.second);
+                return false;
+            }
         }
     }
 

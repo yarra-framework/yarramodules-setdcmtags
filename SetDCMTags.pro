@@ -26,7 +26,8 @@ SOURCES += main.cpp \
     external/mdfdsman.cc \
     external/dcdictbi.cc \
     sdt_twixreader.cpp \
-    sdt_tagmapping.cpp
+    sdt_tagmapping.cpp \
+    sdt_tagwriter.cpp
 
 HEADERS += \
     sdt_mainclass.h \
@@ -34,7 +35,8 @@ HEADERS += \
     external/mdfdsman.h \
     sdt_twixreader.h \
     sdt_twixheader.h \
-    sdt_tagmapping.h
+    sdt_tagmapping.h \
+    sdt_tagwriter.h
 
 
 DEFINES += HAVE_CONFIG_H

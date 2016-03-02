@@ -10,6 +10,7 @@
 
 #include "sdt_twixreader.h"
 #include "sdt_tagmapping.h"
+#include "sdt_tagwriter.h"
 
 
 class sdtSeriesInfo
@@ -62,6 +63,9 @@ public:
 
     // Helper class for assinging the DICOM tags
     sdtTagMapping        tagMapping;
+
+    // Helper class for assinging the DICOM tags
+    sdtTagWriter         tagWriter;
 
     // Map to store all series information
     std::map<int, sdtSeriesInfo> seriesMap;

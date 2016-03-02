@@ -7,6 +7,9 @@
 #include <iostream>
 #include <map>
 
+#include "sdt_global.h"
+
+
 namespace pt = boost::property_tree;
 
 
@@ -24,6 +27,9 @@ public:
     void setupGlobalConfiguration();
     void setupSeriesConfiguration(int series);
 
+    stringmap currentTags;
+    stringmap currentOptions;
+
 protected:
     void setupDefaultMapping();
     void evaluateSeriesOptions(int series);
@@ -31,11 +37,8 @@ protected:
     pt::ptree modeFile;
     pt::ptree dynamicFile;
 
-    std::map<std::string,std::string> globalTags;
-    std::map<std::string,std::string> globalOptions;
-
-    std::map<std::string,std::string> currentTags;
-    std::map<std::string,std::string> currentOptions;
+    stringmap globalTags;
+    stringmap globalOptions;
 
     std::string makeTag(std::string group, std::string element);
 

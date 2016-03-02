@@ -71,7 +71,7 @@ public:
 
     fileVersionType   fileVersion;
     sdtTwixSearchList searchList;
-    std::map<std::string, std::string> values;
+    stringmap         values;
 
     uint64_t lastMeasOffset;
     uint32_t headerLength;
