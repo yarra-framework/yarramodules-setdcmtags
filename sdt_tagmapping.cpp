@@ -6,8 +6,11 @@
 
 sdtTagMapping::sdtTagMapping()
 {
-    global.clear();
-    current.clear();
+    globalTags.clear();
+    globalOptions.clear();
+
+    currentTags.clear();
+    currentOptions.clear();
 
     setupDefaultMapping();
 }
@@ -51,32 +54,120 @@ void sdtTagMapping::readConfiguration(std::string modeFilename, std::string dyna
 
 void sdtTagMapping::setupGlobalConfiguration()
 {
-    // Evaluate global configuration read from mode file
-
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, modeFile.get_child("SetDCMTags"))
+    // Evaluate global configuration read from mode file. This will add or overwrite the default mapping
+    try
     {
-        std::string key=v.first.data();
-        std::string value=v.second.data();
-
-        // Check if the entry if a DICOM mapping. If so, add to mapping table
-        if (key[0]=='(')
+        BOOST_FOREACH(boost::property_tree::ptree::value_type &v, modeFile.get_child("SetDCMTags"))
         {
-            global[key]=value;
-        }
+            std::string key=v.first.data();
+            std::string value=v.second.data();
 
-        std::cout << key << "=" << value << std::endl;  //debug
+            // Check if the entry is DICOM mapping. If so add to mapping table, otherwise add to option table
+            if (key[0]=='(')
+            {
+                globalTags[key]=value;
+            }
+            else
+            {
+                globalOptions[key]=value;
+            }
+        }
+    }
+    catch (const std::exception&)
+    {
+        // Ini section has not been defined / no entries
     }
 
-    // TODO: Read dynamic configuration from dynamic file
+
+    // Read dynamic configuration from dynamic file. This will add or overwrite entries from the mode file
+    try
+    {
+        BOOST_FOREACH(boost::property_tree::ptree::value_type &v, dynamicFile.get_child("SetDCMTags"))
+        {
+            std::string key=v.first.data();
+            std::string value=v.second.data();
+
+            // Check if the entry is DICOM mapping. If so add to mapping table, otherwise add to option table
+            if (key[0]=='(')
+            {
+                globalTags[key]=value;
+            }
+            else
+            {
+                globalOptions[key]=value;
+            }
+        }
+    }
+    catch (const std::exception&)
+    {
+    }
+
+    //std::cout << key << "=" << value << std::endl;  //debug
 }
 
 
 void sdtTagMapping::setupSeriesConfiguration(int series)
 {
-    current=global;
+    // First, copy the global configuration
+    currentTags   =globalTags;
+    currentOptions=globalOptions;
 
-    // TODO: Read series configuration from mode file
+    std::string sectionName="SetDCMTags_Series"+std::to_string(series);
 
-    // TODO: Read series configuration from dynamic file
+    // Read series configuration from mode file (adding to or overwriting global configuration)
+    try
+    {
+        BOOST_FOREACH(boost::property_tree::ptree::value_type &v, modeFile.get_child(sectionName))
+        {
+            std::string key=v.first.data();
+            std::string value=v.second.data();
 
+            // Check if the entry is DICOM mapping. If so add to mapping table, otherwise add to option table
+            if (key[0]=='(')
+            {
+                currentTags[key]=value;
+            }
+            else
+            {
+                currentOptions[key]=value;
+            }
+        }
+    }
+    catch (const std::exception&)
+    {
+        // Ini section has not been defined / no entries
+    }
+
+
+    // Read series configuration from dynamic file
+    try
+    {
+        BOOST_FOREACH(boost::property_tree::ptree::value_type &v, dynamicFile.get_child(sectionName))
+        {
+            std::string key=v.first.data();
+            std::string value=v.second.data();
+
+            // Check if the entry is DICOM mapping. If so add to mapping table, otherwise add to option table
+            if (key[0]=='(')
+            {
+                currentTags[key]=value;
+            }
+            else
+            {
+                currentOptions[key]=value;
+            }
+        }
+    }
+    catch (const std::exception&)
+    {
+    }
+
+
+    evaluateSeriesOptions(series);
+}
+
+
+void sdtTagMapping::evaluateSeriesOptions(int series)
+{
+    // TODO: Implement processing options / macros, e.g. color=true
 }

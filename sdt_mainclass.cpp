@@ -133,6 +133,8 @@ void sdtMainclass::perform(int argc, char *argv[])
     if (!checkFolderExistence())
     {
         LOG("Check if parameters are correct");
+
+        returnValue=1;
         return;
     }
 
@@ -141,19 +143,25 @@ void sdtMainclass::perform(int argc, char *argv[])
     {
         LOG("Error parsing raw-data file " << rawFile);
         LOG("Reason: " << twixReader.errorReason);
+
+        returnValue=1;
         return;
     }
 
     if (!generateFileList())
     {
         LOG("Error while parsing input folder");
+
+        returnValue=1;
         return;
     }
 
     // Generate UIDs for all series
     if (!generateUIDs())
     {
-        LOG("Error while parsing input folder");
+        LOG("Error while generating UIDs");
+
+        returnValue=1;
         return;
     }
 
@@ -161,7 +169,14 @@ void sdtMainclass::perform(int argc, char *argv[])
     tagMapping.readConfiguration(std::string(modeFile.c_str()),std::string(dynamicSettingsFile.c_str()));
     tagMapping.setupGlobalConfiguration();
 
-    // TODO: Loop over all series and process DICOM files
+    // Loop over all series and process DICOM files
+    if (!processSeries())
+    {
+        LOG("Error while processing series");
+
+        returnValue=1;
+        return;
+    }
 
     LOG("Done.");
 }
@@ -171,6 +186,25 @@ void sdtMainclass::perform(int argc, char *argv[])
 bool sdtMainclass::generateUIDs()
 {
     // TODO
+
+    return true;
+}
+
+
+bool sdtMainclass::processSeries()
+{
+    for (auto series : seriesMap)
+    {
+        int seriesID=series.first;
+
+        tagMapping.setupSeriesConfiguration(seriesID);
+
+        for (auto slice : series.second.sliceMap)
+        {
+            // TODO: Process the individual files
+            // std::cout << "  " << file.first << " = " << file.second << std::endl;
+        }
+    }
 
     return true;
 }
@@ -216,14 +250,12 @@ bool sdtMainclass::checkFolderExistence()
 
 bool sdtMainclass::generateFileList()
 {
-    bool       success   =true;
-    seriesmode seriesMode=NOT_DEFINED;
-
-    fs::path   inputPath(std::string(inputDir.c_str()));
-
+    bool success   =true;
     int series     =0;
     int slice      =0;
     seriesmode mode=NOT_DEFINED;
+
+    fs::path inputPath(std::string(inputDir.c_str()));
 
     for(const auto &dir_entry : boost::make_iterator_range(fs::directory_iterator(inputPath), {}))
     {

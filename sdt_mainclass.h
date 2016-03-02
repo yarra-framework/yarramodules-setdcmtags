@@ -41,7 +41,7 @@ public:
     bool parseFilename(std::string filename, seriesmode& mode, int& series, int& slice);
 
     bool generateUIDs();
-
+    bool processSeries();
 
     // Helper class for commandline parsing
     OFCommandLine        cmdLine;

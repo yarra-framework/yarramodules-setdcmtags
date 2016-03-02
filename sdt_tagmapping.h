@@ -21,16 +21,21 @@ public:
     sdtTagMapping();
 
     void readConfiguration(std::string modeFilename, std::string dynamicFilename);
-
-    void setupDefaultMapping();
     void setupGlobalConfiguration();
     void setupSeriesConfiguration(int series);
 
-    std::map<std::string,std::string> global;
-    std::map<std::string,std::string> current;
+protected:
+    void setupDefaultMapping();
+    void evaluateSeriesOptions(int series);
 
     pt::ptree modeFile;
     pt::ptree dynamicFile;
+
+    std::map<std::string,std::string> globalTags;
+    std::map<std::string,std::string> globalOptions;
+
+    std::map<std::string,std::string> currentTags;
+    std::map<std::string,std::string> currentOptions;
 
     std::string makeTag(std::string group, std::string element);
 
