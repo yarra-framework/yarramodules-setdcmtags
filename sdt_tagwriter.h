@@ -37,6 +37,8 @@ protected:
     stringmap* mapping;
     stringmap* options;
 
+    stringmap  tags;
+
     sdtTWIXReader* twixReader;
 };
 

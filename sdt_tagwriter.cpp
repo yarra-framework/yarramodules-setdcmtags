@@ -15,6 +15,8 @@ sdtTagWriter::sdtTagWriter()
     mapping   =nullptr;
     options   =nullptr;
     twixReader=nullptr;
+
+    tags.clear();
 }
 
 
@@ -61,7 +63,25 @@ void sdtTagWriter::setMapping(stringmap* currentMapping, stringmap* currentOptio
 
 bool sdtTagWriter::processFile()
 {
+    tags.clear();
+
+    for (auto mapEntry : *mapping)
+    {
+        std::string dcmPath=mapEntry.first;
+        std::string value="";
+
+        tags[dcmPath]=value;
+    }
+
     // TODO: Evaluate and write the results
+
+    // debug
+    std::cout << "--- Series " << series << ", Slice " << slice << "---" << std::endl;
+    for (auto entry : tags)
+    {
+        std::cout << entry.first << "=" << entry.second << std::endl;
+    }
+    std::cout << "-----------------------------" << std::endl << std::endl;
 
     return true;
 }

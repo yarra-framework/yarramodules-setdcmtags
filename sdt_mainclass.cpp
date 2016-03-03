@@ -182,7 +182,6 @@ void sdtMainclass::perform(int argc, char *argv[])
 }
 
 
-
 bool sdtMainclass::generateUIDs()
 {
     // TODO
