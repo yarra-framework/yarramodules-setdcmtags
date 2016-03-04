@@ -17,8 +17,45 @@ sdtTagMapping::sdtTagMapping()
 
 void sdtTagMapping::setupDefaultMapping()
 {
-    // TODO
+    addTag("0010", "0010", "@PatientName"      );
+    addTag("0010", "0020", "@PatientID"        );
+
+    addTag("0018", "0020", "@ScanningSequence" );
+    addTag("0018", "0021", "@SequenceVariant"  );
+    addTag("0018", "0024", "@SequenceString"   );
+    addTag("0018", "1030", "@ProtocolName"     );
+
+    addTag("0018", "1016", "Yarra Framwork"    );
+    addTag("0018", "1018", "SetDCMTags"        ); // TODO: Add version number
+
+
+    addTag("0020", "000D", "#uid_study"        );
+    addTag("0020", "000E", "#uid_series"       );
+
+    addTag("0020", "0011", "#series"           );
+    addTag("0020", "0013", "#slice"            );
+
+    addTag("0008", "0050", "#acc"              );
 }
+
+/*
+addSearchEntry("SoftwareVersions",           "<ParamString.\"SoftwareVersions\">"       , tSTRING);
+addSearchEntry("Manufacturer",               "<ParamString.\"Manufacturer\">"           , tSTRING);
+addSearchEntry("ManufacturersModelName",     "<ParamString.\"ManufacturersModelName\">" , tSTRING);
+addSearchEntry("LongModelName",              "<ParamString.\"LongModelName\">"          , tSTRING);
+addSearchEntry("MagneticFieldStrength",      "<ParamDouble.\"flMagneticFieldStrength\">", tDOUBLE);
+
+addSearchEntry("DeviceSerialNumber",         "<ParamString.\"DeviceSerialNumber\">"     , tSTRING);
+addSearchEntry("InstitutionAddress",         "<ParamString.\"InstitutionAddress\">"     , tSTRING);
+addSearchEntry("InstitutionName",            "<ParamString.\"InstitutionName\">"        , tSTRING);
+addSearchEntry("Modality",                   "<ParamString.\"Modality\">"               , tSTRING);
+
+addSearchEntry("ScanOptions",                "<ParamString.\"tScanOptions\">"           , tSTRING);
+addSearchEntry("MRAcquisitionType",          "<ParamString.\"tMRAcquisitionType\">"     , tSTRING);
+
+addSearchEntry("BolusAgent",                 "<ParamString.\"BolusAgent\">"             , tSTRING);
+addSearchEntry("ContrastBolusVolume",        "<ParamDouble.\"ContrastBolusVolume\">"    , tDOUBLE);
+*/
 
 
 void sdtTagMapping::readConfiguration(std::string modeFilename, std::string dynamicFilename)

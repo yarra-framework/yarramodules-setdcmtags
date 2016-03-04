@@ -34,6 +34,8 @@ protected:
     void setupDefaultMapping();
     void evaluateSeriesOptions(int series);
 
+    void addTag(std::string group, std::string element, std::string mapping);
+
     pt::ptree modeFile;
     pt::ptree dynamicFile;
 
@@ -41,8 +43,13 @@ protected:
     stringmap globalOptions;
 
     std::string makeTag(std::string group, std::string element);
-
 };
+
+
+inline void sdtTagMapping::addTag(std::string group, std::string element, std::string mapping)
+{
+    globalTags[makeTag(group,element)]=mapping;
+}
 
 
 inline std::string sdtTagMapping::makeTag(std::string group, std::string element)
@@ -51,5 +58,7 @@ inline std::string sdtTagMapping::makeTag(std::string group, std::string element
 }
 
 
+
 #endif // SDT_TAGMAPPING_H
+
 

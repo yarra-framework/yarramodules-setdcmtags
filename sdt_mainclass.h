@@ -58,6 +58,8 @@ public:
     OFCmdString          dynamicSettingsFile;
     bool                 extendedLog;
 
+    std::string          studyUID;
+
     // Helper class to parse TWIX files
     sdtTWIXReader        twixReader;
 

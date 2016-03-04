@@ -13,16 +13,17 @@ namespace fs = boost::filesystem;
 sdtMainclass::sdtMainclass()
     : app("SetDCMTags", "Set DICOM tags to values read from Siemens raw-data file")
 {
-    inputDir="";
+    inputDir ="";
     outputDir="";
-    rawFile="";
+    rawFile  ="";
 
-    accessionNumber="";
-    modeFile="";
+    accessionNumber    ="";
+    modeFile           ="";
     dynamicSettingsFile="";
-    extendedLog=false;
+    extendedLog        =false;
 
     seriesMap.clear();
+    studyUID="";
 
     returnValue=0;
 }
@@ -43,6 +44,8 @@ sdtMainclass::~sdtMainclass()
 
 void sdtMainclass::perform(int argc, char *argv[])
 {
+    OFLog::configure(OFLogger::ERROR_LOG_LEVEL);
+
     cmdLine.addParam ("input",     "Folder with DICOM files to process",                OFCmdParam::PM_Mandatory);
     cmdLine.addParam ("output",    "Folder where modified DICOM files will be written", OFCmdParam::PM_Mandatory);
     cmdLine.addParam ("rawfile",   "Path and name of raw-data file",                    OFCmdParam::PM_Mandatory);
@@ -184,7 +187,18 @@ void sdtMainclass::perform(int argc, char *argv[])
 
 bool sdtMainclass::generateUIDs()
 {
-    // TODO
+    // Loop over all series to generate a different UID for each series
+    for (auto series : seriesMap)
+    {
+        char uid[100];
+        dcmGenerateUniqueIdentifier(uid, SITE_SERIES_UID_ROOT);
+        series.second.uid=std::string(uid);
+    }
+
+    // Generate a study UID
+    char uid[100];
+    dcmGenerateUniqueIdentifier(uid, SITE_STUDY_UID_ROOT);
+    studyUID=std::string(uid);
 
     return true;
 }
@@ -198,6 +212,9 @@ bool sdtMainclass::processSeries()
     // Set folder for reading and writing the DICOMs
     tagWriter.setFolders(std::string(inputDir.c_str()), std::string(outputDir.c_str()));
 
+    // Forward the ACC number
+    tagWriter.setAccessionNumber(std::string(accessionNumber.c_str()));
+
     // Loop over all series
     for (auto series : seriesMap)
     {
@@ -208,7 +225,7 @@ bool sdtMainclass::processSeries()
         for (auto slice : series.second.sliceMap)
         {
             // Inform helper class about current file name and slice/series counters
-            tagWriter.setFile(slice.second, slice.first, seriesID, series.second.uid);
+            tagWriter.setFile(slice.second, slice.first, seriesID, series.second.uid, studyUID);
             tagWriter.setMapping(&tagMapping.currentTags, &tagMapping.currentOptions);
 
             if (!tagWriter.processFile())

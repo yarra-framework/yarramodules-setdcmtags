@@ -10,6 +10,13 @@
 #define SDT_TAG_RAW '@'
 #define SDT_TAG_VAR '#'
 
+#define SDT_VAR_KEEP       "keep"
+#define SDT_VAR_SLICE      "slice"
+#define SDT_VAR_SERIES     "series"
+#define SDT_VAR_UID_SERIES "uid_series"
+#define SDT_VAR_UID_STUDY  "uid_study"
+#define SDT_VAR_ACC        "acc"
+
 
 #define LOG(x) std::cout << x << std::endl;
 
@@ -18,5 +25,3 @@ typedef std::map<std::string,std::string> stringmap;
 
 
 #endif // SDT_GLOBAL_H
-
-
