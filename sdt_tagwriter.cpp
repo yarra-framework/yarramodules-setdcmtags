@@ -27,6 +27,8 @@ sdtTagWriter::sdtTagWriter()
     twixReader=nullptr;
 
     tags.clear();
+
+    seriesOffset=0;
 }
 
 
@@ -69,6 +71,8 @@ void sdtTagWriter::setMapping(stringmap* currentMapping, stringmap* currentOptio
 {
     mapping=currentMapping;
     options=currentOptions;
+
+    // TODO: Update series offset
 }
 
 
@@ -158,7 +162,7 @@ bool sdtTagWriter::getTagValue(std::string mapping, std::string& value)
 
         if (variable==SDT_VAR_SERIES)
         {
-            value=std::to_string(series);
+            value=std::to_string(series+seriesOffset);
         }
 
         if (variable==SDT_VAR_UID_SERIES)

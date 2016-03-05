@@ -47,6 +47,8 @@ protected:
     bool getTagValue(std::string mapping, std::string& value);
     bool writeFile();
 
+    int seriesOffset;
+
 };
 
 

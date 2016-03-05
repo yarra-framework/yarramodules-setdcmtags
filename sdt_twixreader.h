@@ -56,6 +56,8 @@ public:
     std::string getErrorReason();
     std::string getValue(std::string id);
 
+    void setDebugOptions(bool dumpProtocol);
+
     void prepareSearchList();
     void addSearchEntry(std::string id, std::string searchString, twixitemtype type, bool mandatory=true);
 
@@ -69,6 +71,8 @@ public:
     void removePrecisionTag(std::string& line);
     void findBraces(std::string& line, std::ifstream& file);
 
+    void calculateAdditionalValues();
+
     fileVersionType   fileVersion;
     sdtTwixSearchList searchList;
     stringmap         values;
@@ -79,12 +83,20 @@ public:
 
     std::string errorReason;
 
+    bool dbgDumpProtocol;
+
 };
 
 
 inline std::string sdtTWIXReader::getErrorReason()
 {
     return errorReason;
+}
+
+
+inline void sdtTWIXReader::setDebugOptions(bool dumpProtocol)
+{
+    dbgDumpProtocol=dumpProtocol;
 }
 
 

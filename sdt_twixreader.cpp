@@ -16,6 +16,8 @@ sdtTWIXReader::sdtTWIXReader()
     headerLength=0;
     headerEnd=0;
 
+    dbgDumpProtocol=false;
+
     prepareSearchList();
 }
 
@@ -110,6 +112,11 @@ bool sdtTWIXReader::readFile(std::string filename)
     LOG("Header size is " << headerLength);
     LOG("");
 
+    if (dbgDumpProtocol)
+    {
+        LOG("### Protocol Dump Begin ###");
+    }
+
     bool terminateParsing=false;
 
     while ((!file.eof()) && (file.tellg()<headerEnd) && (!terminateParsing))
@@ -117,17 +124,12 @@ bool sdtTWIXReader::readFile(std::string filename)
         std::string line="";
         std::getline(file, line);
 
-        if (!line.empty())
+        if ((dbgDumpProtocol) && (!line.empty()))
         {
-            //std::cout << line << std::endl;
+            LOG(line);
         }
 
         parseXProtLine(line, file);
-
-        //if (searchList.empty())
-        //{
-        //    terminateParsing=true;
-        //}
 
         // When the MRProt section is reached, parse it and terminate
         if (line.find("### ASCCONV BEGIN ###")!=std::string::npos)
@@ -137,6 +139,11 @@ bool sdtTWIXReader::readFile(std::string filename)
         }
     }
 
+    if (dbgDumpProtocol)
+    {
+        LOG("### Protocol Dump End ###");
+    }
+
     file.close();
 
     if (!searchList.empty())
@@ -144,6 +151,8 @@ bool sdtTWIXReader::readFile(std::string filename)
         errorReason="Not all raw-data entries found";
         return false;
     }
+
+    calculateAdditionalValues();
 
     /*
     for(auto value : values)
@@ -156,12 +165,31 @@ bool sdtTWIXReader::readFile(std::string filename)
 }
 
 
+void sdtTWIXReader::calculateAdditionalValues()
+{
+    if (values.find("DeviceSerialNumber")!=values.end())
+    {
+        values["StationName"]="MRC"+values["DeviceSerialNumber"];
+    }
+
+    // TODO: Calculate frequency
+
+    // TODO: Modify units of MR prot entries
+}
+
+
+
 bool sdtTWIXReader::readMRProt(std::ifstream& file)
 {
     while ((!file.eof()) && (file.tellg()<headerEnd))
     {
         std::string line="";
         std::getline(file, line);
+
+        if ((dbgDumpProtocol) && (!line.empty()))
+        {
+            LOG(line);
+        }
 
         // Terminate once the end of the mrprot section is reached
         if (line.find("### ASCCONV END ###")!=std::string::npos)
@@ -170,8 +198,6 @@ bool sdtTWIXReader::readMRProt(std::ifstream& file)
         }
 
         parseMRProtLine(line);
-
-        //std::cout << line << std::endl;
     }
 
     return false;
@@ -340,10 +366,17 @@ void sdtTWIXReader::removePrecisionTag(std::string& line)
 
 void sdtTWIXReader::findBraces(std::string& line, std::ifstream& file)
 {
+    // Continue reading lines until the closing brace is found
     while ((!file.eof()) && (file.tellg()<headerEnd) && (line.find("}")==std::string::npos))
     {
         std::string nextLine;
         std::getline(file, nextLine);
+
+        if ((dbgDumpProtocol) && (!nextLine.empty()))
+        {
+            LOG(nextLine);
+        }
+
         line += nextLine;
     }
 
@@ -391,5 +424,9 @@ void sdtTWIXReader::prepareSearchList()
 
     addSearchEntry("BolusAgent",                 "<ParamString.\"BolusAgent\">"             , tSTRING);
     addSearchEntry("ContrastBolusVolume",        "<ParamDouble.\"ContrastBolusVolume\">"    , tDOUBLE);
+
+    addSearchEntry("UsedPatientWeight",          "<ParamDouble.\"flUsedPatientWeight\">"    , tDOUBLE);
+    addSearchEntry("Frequency",                   "<ParamLong.\"lFrequency\">"              , tLONG  );
+
 }
 

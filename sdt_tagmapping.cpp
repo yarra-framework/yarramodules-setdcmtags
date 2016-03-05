@@ -17,45 +17,61 @@ sdtTagMapping::sdtTagMapping()
 
 void sdtTagMapping::setupDefaultMapping()
 {
-    addTag("0010", "0010", "@PatientName"      );
-    addTag("0010", "0020", "@PatientID"        );
+    addTag("0010", "0010", "@PatientName"               );
+    addTag("0010", "0020", "@PatientID"                 );
 
-    addTag("0018", "0020", "@ScanningSequence" );
-    addTag("0018", "0021", "@SequenceVariant"  );
-    addTag("0018", "0024", "@SequenceString"   );
-    addTag("0018", "1030", "@ProtocolName"     );
+    addTag("0018", "0010", "@BolusAgent"                );
+    addTag("0018", "1041", "@ContrastBolusVolume"       );
 
-    addTag("0018", "1016", "Yarra Framwork"    );
-    addTag("0018", "1018", "SetDCMTags"        ); // TODO: Add version number
+    addTag("0018", "0020", "@ScanningSequence"          );
+    addTag("0018", "0021", "@SequenceVariant"           );
+    addTag("0018", "0022", "@ScanOptions"               );
+    addTag("0018", "0023", "@MRAcquisitionType"         );
+    addTag("0018", "0024", "@SequenceString"            );
 
+    addTag("0018", "0087", "@MagneticFieldStrength"     );
+    addTag("0018", "0100", "@DeviceSerialNumber"        );
+    addTag("0018", "1030", "@ProtocolName"              );
+    addTag("0018", "1020", "@SoftwareVersions"          );
 
-    addTag("0020", "000D", "#uid_study"        );
-    addTag("0020", "000E", "#uid_series"       );
+    addTag("0018", "1016", "Yarra Framwork"             );
 
-    addTag("0020", "0011", "#series"           );
-    addTag("0020", "0013", "#slice"            );
+    std::string setDCMTagInfo=std::string("SetDCMTags Ver ")+std::to_string(SDT_VERSION);
+    addTag("0018", "1018", setDCMTagInfo                );
 
-    addTag("0008", "0050", "#acc"              );
-}
+    addTag("0008", "0060", "@Modality"                  );
+    addTag("0008", "0070", "@Manufacturer"              );
+    addTag("0008", "1090", "@ManufacturersModelName"    );
+    addTag("0008", "0080", "@InstitutionName"           );
+    addTag("0008", "0081", "@InstitutionAddress"        );
+    addTag("0008", "1010", "@StationName"               );
+
+    addTag("0008", "0050", "#acc"                       );
+    addTag("0020", "000D", "#uid_study"                 );
+    addTag("0020", "000E", "#uid_series"                );
+    addTag("0020", "0011", "#series"                    );
+    addTag("0020", "0013", "#slice"                     );
+    addTag("0020", "0012", "1"                          );
+
+    addTag("0028", "0004", "MONOCHROME2"                );
+    addTag("0008", "0005", "ISO_IR 100"                 );
+
 
 /*
-addSearchEntry("SoftwareVersions",           "<ParamString.\"SoftwareVersions\">"       , tSTRING);
-addSearchEntry("Manufacturer",               "<ParamString.\"Manufacturer\">"           , tSTRING);
-addSearchEntry("ManufacturersModelName",     "<ParamString.\"ManufacturersModelName\">" , tSTRING);
-addSearchEntry("LongModelName",              "<ParamString.\"LongModelName\">"          , tSTRING);
-addSearchEntry("MagneticFieldStrength",      "<ParamDouble.\"flMagneticFieldStrength\">", tDOUBLE);
+    common.ImageType = 'ORIGINAL\PRIMARY\M\1\NORM';
 
-addSearchEntry("DeviceSerialNumber",         "<ParamString.\"DeviceSerialNumber\">"     , tSTRING);
-addSearchEntry("InstitutionAddress",         "<ParamString.\"InstitutionAddress\">"     , tSTRING);
-addSearchEntry("InstitutionName",            "<ParamString.\"InstitutionName\">"        , tSTRING);
-addSearchEntry("Modality",                   "<ParamString.\"Modality\">"               , tSTRING);
+    common.Private_0019_10xx_Creator = 'SIEMENS MR HEADER';
+    common.Private_0019_1008 = 'IMAGE NUM 4';
+    common.Private_0051_10xx_Creator = 'SIEMENS MR HEADER';
+    common.Private_0051_1008 = 'IMAGE NUM 4';
+    common.Private_0029_10xx_Creator = 'SIEMENS CSA HEADER';
+    common.Private_0029_11xx_Creator = 'SIEMENS MEDCOM HEADER2';
+    common.CSAImageHeaderType = 'IMAGE NUM 4';
+    common.CSASeriesHeaderType = 'MR';
 
-addSearchEntry("ScanOptions",                "<ParamString.\"tScanOptions\">"           , tSTRING);
-addSearchEntry("MRAcquisitionType",          "<ParamString.\"tMRAcquisitionType\">"     , tSTRING);
-
-addSearchEntry("BolusAgent",                 "<ParamString.\"BolusAgent\">"             , tSTRING);
-addSearchEntry("ContrastBolusVolume",        "<ParamDouble.\"ContrastBolusVolume\">"    , tDOUBLE);
 */
+
+}
 
 
 void sdtTagMapping::readConfiguration(std::string modeFilename, std::string dynamicFilename)
