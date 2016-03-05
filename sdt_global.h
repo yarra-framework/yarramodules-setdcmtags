@@ -5,10 +5,11 @@
 #include <map>
 #include <vector>
 
-#define SDT_VERSION 0.1
+#define SDT_VERSION "0.1"
 
 #define SDT_TAG_RAW '@'
 #define SDT_TAG_VAR '#'
+#define SDT_TAG_CNV '$'
 
 #define SDT_VAR_KEEP       "keep"
 #define SDT_VAR_SLICE      "slice"

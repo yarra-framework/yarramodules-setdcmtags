@@ -200,15 +200,90 @@ bool sdtTagWriter::getTagValue(std::string mapping, std::string& value)
     if (mapping[0]==SDT_TAG_RAW)
     {
         std::string rawfileKey=mapping.substr(1,std::string::npos);
+        value=twixReader->getValue(rawfileKey);
+        return true;
+    }
+
+    // If mapped entry is a conversion of a rawfile entry
+    if (mapping[0]==SDT_TAG_CNV)
+    {
+        size_t sepPos=mapping.find(",");
+
+        std::string rawfileKey=mapping.substr(5,sepPos-5);
+        std::string arg=mapping.substr(sepPos+1,mapping.length()-2-sepPos);
+        std::string func=mapping.substr(1,3);
 
         value=twixReader->getValue(rawfileKey);
+
+        //LOG("PRE:  " << value << "  FUNCT=" << func << "  ARG=" << arg);
+
+        if (func=="DIV")
+        {
+            value=eval_DIV(value, arg);
+        }
+
+        //LOG("POST: " << value);
+        //LOG("FUNC: <" << rawfileKey << "> <" << arg << ">");
 
         return true;
     }
 
     // If mapped entry is static entry
     value=mapping;
-
     return true;
 }
 
+
+std::string sdtTagWriter::eval_DIV(std::string value, std::string arg)
+{
+    int decimals=-1;
+
+    size_t sepPos=arg.find(",");
+    if (sepPos!=std::string::npos)
+    {
+        //LOG("Fullarg=" << arg);
+
+        decimals=atoi(arg.substr(sepPos+1,std::string::npos).c_str());
+        //LOG("dec=" << arg.substr(sepPos+1,std::string::npos));
+
+        arg=arg.substr(0,sepPos);
+        //LOG("arg=" << arg);
+    }
+
+    float val=stof(value);
+    float div=stof(arg);
+
+    if (div!=0)
+    {
+        value=std::to_string(val/div);
+
+        // If maximum number of decimals has been specified
+        if (decimals>=0)
+        {
+            //LOG(" pre=" << value);
+            sepPos=value.find(".");
+            if (sepPos!=std::string::npos)
+            {
+                // If no decimals are requested, delete the . as well
+                if (decimals==0)
+                {
+                    decimals=-1;
+                }
+
+                size_t eraseStart=sepPos+1+decimals;
+
+                if (eraseStart<value.length()-1)
+                {
+                    value.erase(eraseStart,std::string::npos);
+                }
+            }
+            //LOG("post=" << value);
+        }
+
+        return value;
+    }
+    else
+    {
+        return "0";
+    }
+}

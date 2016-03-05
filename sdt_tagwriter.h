@@ -49,6 +49,8 @@ protected:
 
     int seriesOffset;
 
+    std::string eval_DIV(std::string value, std::string arg);
+
 };
 
 

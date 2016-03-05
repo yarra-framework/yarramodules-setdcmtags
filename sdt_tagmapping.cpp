@@ -34,9 +34,9 @@ void sdtTagMapping::setupDefaultMapping()
     addTag("0018", "1030", "@ProtocolName"              );
     addTag("0018", "1020", "@SoftwareVersions"          );
 
-    addTag("0018", "1016", "Yarra Framwork"             );
+    addTag("0018", "1016", "Yarra Framework"             );
 
-    std::string setDCMTagInfo=std::string("SetDCMTags Ver ")+std::to_string(SDT_VERSION);
+    std::string setDCMTagInfo=std::string("SetDCMTags Ver ")+SDT_VERSION;
     addTag("0018", "1018", setDCMTagInfo                );
 
     addTag("0008", "0060", "@Modality"                  );
@@ -55,6 +55,11 @@ void sdtTagMapping::setupDefaultMapping()
 
     addTag("0028", "0004", "MONOCHROME2"                );
     addTag("0008", "0005", "ISO_IR 100"                 );
+
+    addTag("0018", "0084", "$DIV(Frequency,1000000)"    );
+
+    addTag("0018", "0080", "$DIV(mrprot.alTR[0],1000,0)");
+    addTag("0018", "0081", "$DIV(mrprot.alTE[0],1000,2)");
 
 
 /*
