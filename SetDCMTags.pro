@@ -18,7 +18,7 @@ equals( BUILD_OS, "UBUNTU_1204" ) {
     BOOST_PATH=/usr/local/lib
 }
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 -DENABLE_BUILTIN_DICTIONARY -DENABLE_PRIVATE_TAGS
 
 
 SOURCES += main.cpp \

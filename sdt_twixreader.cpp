@@ -148,8 +148,30 @@ bool sdtTWIXReader::readFile(std::string filename)
 
     if (!searchList.empty())
     {
-        errorReason="Not all raw-data entries found";
-        return false;
+        bool missingMandatoryEntry=false;
+
+        // Check if any of the remaining entries is a mandatory entry
+        for (auto& entry : searchList)
+        {
+            if (entry.mandatory)
+            {
+                missingMandatoryEntry=true;
+                break;
+            }
+        }
+
+        if (missingMandatoryEntry)
+        {
+            LOG("Missing raw-data entries:");
+            for (auto& entry : searchList)
+            {
+                LOG(entry.id);
+            }
+            LOG("");
+
+            errorReason="Not all raw-data entries found";
+            return false;
+        }
     }
 
     calculateAdditionalValues();
@@ -167,14 +189,42 @@ bool sdtTWIXReader::readFile(std::string filename)
 
 void sdtTWIXReader::calculateAdditionalValues()
 {
+    // Created modified tags as needed by the DICOM format
+
     if (values.find("DeviceSerialNumber")!=values.end())
     {
         values["StationName"]="MRC"+values["DeviceSerialNumber"];
     }
 
-    // TODO: Calculate frequency
+    if (values.find("PatientAge")!=values.end())
+    {
+        std::string agestr=values["PatientAge"];
 
-    // TODO: Modify units of MR prot entries
+        // Remove the decimals
+        size_t dotPos=agestr.find(".");
+        if (dotPos!=std::string::npos)
+        {
+            agestr.erase(dotPos,std::string::npos);
+        }
+
+        values["PatientAge_DCM"]=agestr+"Y";
+    }
+
+    if (values.find("PatientSex")!=values.end())
+    {
+        std::string patientSex="O";
+
+        if (values["PatientSex"]=="1")
+        {
+            patientSex="F";
+        }
+        if (values["PatientSex"]=="2")
+        {
+            patientSex="M";
+        }
+
+        values["PatientSex_DCM"]=patientSex;
+    }
 }
 
 
@@ -202,6 +252,7 @@ bool sdtTWIXReader::readMRProt(std::ifstream& file)
 
     return false;
 }
+
 
 static std::string sdt_wipKey_VB="sWiPMemBlock";
 static std::string sdt_wipKey_VD="sWipMemBlock";
@@ -294,6 +345,11 @@ void sdtTWIXReader::parseXProtLine(std::string& line, std::ifstream& file)
 
             case tDOUBLE:
                 removePrecisionTag(value);
+                break;
+
+            case tARRAY:
+                // TODO
+                value="";
                 break;
             }
 
@@ -403,30 +459,56 @@ void sdtTWIXReader::prepareSearchList()
 {
     addSearchEntry("PatientName",                "<ParamString.\"tPatientName\">"           , tSTRING);
     addSearchEntry("PatientID",                  "<ParamString.\"PatientID\">"              , tSTRING);
+    addSearchEntry("PatientBirthDay",            "<ParamString.\"PatientBirthDay\">"        , tSTRING);
+    addSearchEntry("PatientSex",                 "<ParamLong.\"PatientSex\">"               , tLONG  );
+    addSearchEntry("PatientAge",                 "<ParamDouble.\"flPatientAge\">"           , tDOUBLE);
+    addSearchEntry("UsedPatientWeight",          "<ParamDouble.\"flUsedPatientWeight\">"    , tDOUBLE);
+
     addSearchEntry("ProtocolName",               "<ParamString.\"tProtocolName\">"          , tSTRING);
     addSearchEntry("SequenceString",             "<ParamString.\"SequenceString\">"         , tSTRING);
-
-    addSearchEntry("SoftwareVersions",           "<ParamString.\"SoftwareVersions\">"       , tSTRING);
-    addSearchEntry("Manufacturer",               "<ParamString.\"Manufacturer\">"           , tSTRING);
-    addSearchEntry("ManufacturersModelName",     "<ParamString.\"ManufacturersModelName\">" , tSTRING);
-    addSearchEntry("LongModelName",              "<ParamString.\"LongModelName\">"          , tSTRING);
-    addSearchEntry("MagneticFieldStrength",      "<ParamDouble.\"flMagneticFieldStrength\">", tDOUBLE);
-
-    addSearchEntry("DeviceSerialNumber",         "<ParamString.\"DeviceSerialNumber\">"     , tSTRING);
-    addSearchEntry("InstitutionAddress",         "<ParamString.\"InstitutionAddress\">"     , tSTRING);
-    addSearchEntry("InstitutionName",            "<ParamString.\"InstitutionName\">"        , tSTRING);
-    addSearchEntry("Modality",                   "<ParamString.\"Modality\">"               , tSTRING);
-
     addSearchEntry("SequenceVariant",            "<ParamString.\"tSequenceVariant\">"       , tSTRING);
     addSearchEntry("ScanningSequence",           "<ParamString.\"tScanningSequence\">"      , tSTRING);
     addSearchEntry("ScanOptions",                "<ParamString.\"tScanOptions\">"           , tSTRING);
     addSearchEntry("MRAcquisitionType",          "<ParamString.\"tMRAcquisitionType\">"     , tSTRING);
 
+    addSearchEntry("Modality",                   "<ParamString.\"Modality\">"               , tSTRING);
+    addSearchEntry("Manufacturer",               "<ParamString.\"Manufacturer\">"           , tSTRING);
+    addSearchEntry("ManufacturersModelName",     "<ParamString.\"ManufacturersModelName\">" , tSTRING);
+    addSearchEntry("LongModelName",              "<ParamString.\"LongModelName\">"          , tSTRING);
+    addSearchEntry("SoftwareVersions",           "<ParamString.\"SoftwareVersions\">"       , tSTRING);
+    addSearchEntry("DeviceSerialNumber",         "<ParamString.\"DeviceSerialNumber\">"     , tSTRING);
+    addSearchEntry("InstitutionAddress",         "<ParamString.\"InstitutionAddress\">"     , tSTRING);
+    addSearchEntry("InstitutionName",            "<ParamString.\"InstitutionName\">"        , tSTRING);
+    addSearchEntry("MagneticFieldStrength",      "<ParamDouble.\"flMagneticFieldStrength\">", tDOUBLE);
+    addSearchEntry("Frequency",                  "<ParamLong.\"lFrequency\">"               , tLONG  );
+    addSearchEntry("ResonantNucleus",            "<ParamString.\"ResonantNucleus\">"        , tSTRING);
+
     addSearchEntry("BolusAgent",                 "<ParamString.\"BolusAgent\">"             , tSTRING);
     addSearchEntry("ContrastBolusVolume",        "<ParamDouble.\"ContrastBolusVolume\">"    , tDOUBLE);
+    addSearchEntry("AngioFlag",                  "<ParamString.\"tAngioFlag\">"             , tSTRING);
+    addSearchEntry("NumberOfAverages",           "<ParamLong.\"NAveMeas\">"                 , tLONG  );
 
-    addSearchEntry("UsedPatientWeight",          "<ParamDouble.\"flUsedPatientWeight\">"    , tDOUBLE);
-    addSearchEntry("Frequency",                   "<ParamLong.\"lFrequency\">"              , tLONG  );
+    addSearchEntry("PatientPosition",            "<ParamString.\"tPatientPosition\">"       , tSTRING);
+    addSearchEntry("BodyPartExamined",           "<ParamString.\"tBodyPartExamined\">"      , tSTRING);
+    addSearchEntry("Laterality",                 "<ParamString.\"tLaterality\">"            , tSTRING, false);
+
+    addSearchEntry("GradientCoil",               "<ParamString.\"tGradientCoil\">"          , tSTRING);
+    addSearchEntry("TransmittingCoil",           "<ParamString.\"TransmittingCoil\">"       , tSTRING);
+
+    addSearchEntry("ReadoutOSFactor",            "<ParamDouble.\"flReadoutOSFactor\">"      , tDOUBLE);
+    addSearchEntry("SpacingBetweenSlices",       "<ParamArray.\"SpacingBetweenSlices\">"    , tARRAY );
+
+
+/*
+    common.StudyDate = daystr;
+    common.SeriesDate = daystr;
+    common.AcquisitionDate = daystr;
+    common.ContentDate = dateofseccapture;
+    common.StudyTime = studytime;
+    common.SeriesTime = studytime;
+    common.AcquisitionTime = studytime;
+    common.ContentTime = timeofseccapture;
+*/
 
 }
 

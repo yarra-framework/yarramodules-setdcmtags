@@ -18,6 +18,12 @@
 #define SDT_VAR_UID_STUDY  "uid_study"
 #define SDT_VAR_ACC        "acc"
 
+#define SDT_OPT_SERIESOFFSET  "SeriesOffset"
+#define SDT_OPT_COLOR         "Color"
+#define SDT_OPT_CLEARDEFAULTS "ClearDefaults"
+
+#define SDT_TRUE             "true"
+
 
 #define LOG(x) std::cout << x << std::endl;
 

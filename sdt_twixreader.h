@@ -14,7 +14,8 @@ enum twixitemtype
     tSTRING=0,
     tBOOL,
     tLONG,
-    tDOUBLE
+    tDOUBLE,
+    tARRAY
 };
 
 

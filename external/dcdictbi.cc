@@ -10491,11 +10491,11 @@ static const DBI_SimpleEntry simpleBuiltinDict[] = {
       EVR_CS, "0019ImageNum4", 1, 1, "PrivateTag",
       DcmDictRange_Unspecified, DcmDictRange_Unspecified,
       "SIEMENS MR HEADER" }
-  , { 0x0019, 0x1008, 0x0019, 0x1008,
+    , { 0x0019, 0x1008, 0x0019, 0x1008,
       EVR_IS, "PatientPosition", 1, 1, "PrivateTag",
       DcmDictRange_Unspecified, DcmDictRange_Unspecified,
       "PHILIPS MR/PART" }
-  , { 0x0019, 0x1009, 0x0019, 0x1009,
+    , { 0x0019, 0x1009, 0x0019, 0x1009,
       EVR_LO, "", 1, 1, "PrivateTag",
       DcmDictRange_Unspecified, DcmDictRange_Unspecified,
       "SIEMENS MR HEADER" }

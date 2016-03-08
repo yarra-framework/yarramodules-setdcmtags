@@ -17,64 +17,79 @@ sdtTagMapping::sdtTagMapping()
 
 void sdtTagMapping::setupDefaultMapping()
 {
-    addTag("0010", "0010", "@PatientName"               );
-    addTag("0010", "0020", "@PatientID"                 );
+    addTag("0010", "0010", "@PatientName"               ); // Patient's Name
+    addTag("0010", "0020", "@PatientID"                 ); // Patient ID
+    addTag("0010", "0030", "@PatientBirthDay"           ); // Patient's Birth Date
+    addTag("0010", "1010", "@PatientAge_DCM"            ); // Patient's Age
+    addTag("0010", "0040", "@PatientSex_DCM"            ); // Patient's Sex
 
-    addTag("0018", "0010", "@BolusAgent"                );
-    addTag("0018", "1041", "@ContrastBolusVolume"       );
+    addTag("0018", "0010", "@BolusAgent"                ); // Contrast/Bolus Agent
+    addTag("0018", "1041", "@ContrastBolusVolume"       ); // Contrast/Bolus Volume
 
-    addTag("0018", "0020", "@ScanningSequence"          );
-    addTag("0018", "0021", "@SequenceVariant"           );
-    addTag("0018", "0022", "@ScanOptions"               );
-    addTag("0018", "0023", "@MRAcquisitionType"         );
-    addTag("0018", "0024", "@SequenceString"            );
+    addTag("0018", "0020", "@ScanningSequence"          ); // Scanning Sequence
+    addTag("0018", "0021", "@SequenceVariant"           ); // Sequence Variant
+    addTag("0018", "0022", "@ScanOptions"               ); // Scan Options
+    addTag("0018", "0023", "@MRAcquisitionType"         ); // MR Acquisition Type
+    addTag("0018", "0024", "@SequenceString"            ); // Sequence Name
 
-    addTag("0018", "0087", "@MagneticFieldStrength"     );
-    addTag("0018", "0100", "@DeviceSerialNumber"        );
-    addTag("0018", "1030", "@ProtocolName"              );
-    addTag("0018", "1020", "@SoftwareVersions"          );
+    addTag("0018", "0087", "@MagneticFieldStrength"     ); // Magnetic Field Strength
+    addTag("0018", "0100", "@DeviceSerialNumber"        ); // Device Serial Number
+    addTag("0018", "1030", "@ProtocolName"              ); // Protocol Name
+    addTag("0008", "103E", "@ProtocolName"              ); // Series Description
 
-    addTag("0018", "1016", "Yarra Framework"             );
+    addTag("0018", "1020", "@SoftwareVersions"          ); // Software Versions
+
+    addTag("0018", "1016", "Yarra Framework"             ); // Secondary Capture Device Manufacturer
 
     std::string setDCMTagInfo=std::string("SetDCMTags Ver ")+SDT_VERSION;
-    addTag("0018", "1018", setDCMTagInfo                );
+    addTag("0018", "1018", setDCMTagInfo                ); // Secondary Capture Device Manufacturer's Model Name
 
-    addTag("0008", "0060", "@Modality"                  );
-    addTag("0008", "0070", "@Manufacturer"              );
-    addTag("0008", "1090", "@ManufacturersModelName"    );
-    addTag("0008", "0080", "@InstitutionName"           );
-    addTag("0008", "0081", "@InstitutionAddress"        );
-    addTag("0008", "1010", "@StationName"               );
+    addTag("0008", "0060", "@Modality"                  ); // Modality
+    addTag("0008", "0070", "@Manufacturer"              ); // Manufacturer
+    addTag("0008", "1090", "@ManufacturersModelName"    ); // Manufacturer's Model Name
+    addTag("0008", "0080", "@InstitutionName"           ); // Institution Name
+    addTag("0008", "0081", "@InstitutionAddress"        ); // Institution Address
+    addTag("0008", "1010", "@StationName"               ); // Station Name
 
-    addTag("0008", "0050", "#acc"                       );
-    addTag("0020", "000D", "#uid_study"                 );
-    addTag("0020", "000E", "#uid_series"                );
-    addTag("0020", "0011", "#series"                    );
-    addTag("0020", "0013", "#slice"                     );
-    addTag("0020", "0012", "1"                          );
+    addTag("0008", "0050", "#acc"                       ); // Accession Number
+    addTag("0020", "000D", "#uid_study"                 ); // Study Instance UID
+    addTag("0020", "0010", "#uid_study"                 ); // Study ID
+    addTag("0020", "0052", "#uid_study"                 ); // Frame of Reference UID
+    addTag("0020", "000E", "#uid_series"                ); // Series Instance UID
+    addTag("0020", "0011", "#series"                    ); // Series Number
+    addTag("0020", "0013", "#slice"                     ); // Instance Number
+    addTag("0020", "0012", "1"                          ); // Acquisition Number
 
-    addTag("0028", "0004", "MONOCHROME2"                );
-    addTag("0008", "0005", "ISO_IR 100"                 );
+    addTag("0028", "0004", "MONOCHROME2"                ); // Photometric Interpretation
+    addTag("0008", "0005", "ISO_IR 100"                 ); // Specific Character Set
 
-    addTag("0018", "0084", "$DIV(Frequency,1000000)"    );
+    addTag("0018", "0084", "$DIV(Frequency,1000000)"    ); // Imaging Frequency
 
-    addTag("0018", "0080", "$DIV(mrprot.alTR[0],1000,0)");
-    addTag("0018", "0081", "$DIV(mrprot.alTE[0],1000,2)");
+    addTag("0018", "0080", "$DIV(mrprot.alTR[0],1000,0)"); // Repetition Time
+    addTag("0018", "0081", "$DIV(mrprot.alTE[0],1000,2)"); // Echo Time
+
+    addTag("0028", "0002", "1"                          ); // Samples per Pixel
+    addTag("0028", "0100", "16"                         ); // Bits Allocated
+    addTag("0028", "0103", "0"                          ); // Pixel Representation
+
+    addTag("0008", "0008", "ORIGINAL\\PRIMARY"          ); // Image Type
+
+    addTag("0019", "0010", "SIEMENS MR HEADER"          ); // Siemens Private Tag
+    addTag("0051", "0010", "SIEMENS MR HEADER"          ); // Siemens Private Tag
+    addTag("0019", "1008", "IMAGE NUM 4"                ); // Siemens Private Tag
+    addTag("0029", "1008", "IMAGE NUM 4"                ); // Siemens Private Tag
+    addTag("0051", "1008", "IMAGE NUM 4"                ); // Siemens Private Tag
+    addTag("0029", "0010", "SIEMENS CSA HEADER"         ); // Siemens Private Tag
+    addTag("0029", "0011", "SIEMENS MEDCOM HEADER2"     ); // Siemens Private Tag
+    addTag("0029", "1018", "MR"                         ); // Siemens Private Tag
 
 
-/*
-    common.ImageType = 'ORIGINAL\PRIMARY\M\1\NORM';
+    // TODO: Set slice orientation / location: DCM_ImagePositionPatient, DCM_ImageOrientationPatient, DCM_SliceThickness, DCM_PixelSpacing, DCM_SliceLocation, DCM_PositionReferenceIndicator
 
-    common.Private_0019_10xx_Creator = 'SIEMENS MR HEADER';
-    common.Private_0019_1008 = 'IMAGE NUM 4';
-    common.Private_0051_10xx_Creator = 'SIEMENS MR HEADER';
-    common.Private_0051_1008 = 'IMAGE NUM 4';
-    common.Private_0029_10xx_Creator = 'SIEMENS CSA HEADER';
-    common.Private_0029_11xx_Creator = 'SIEMENS MEDCOM HEADER2';
-    common.CSAImageHeaderType = 'IMAGE NUM 4';
-    common.CSASeriesHeaderType = 'MR';
+    // TODO: Set time information: DCM_InstanceCreationDate, DCM_StudyDate, DCM_SeriesDate, DCM_AcquisitionDate, DCM_ContentDate, DCM_StudyTime
+    //                             DCM_InstanceCreationTime, DCM_SeriesTime, DCM_AcquisitionTime, DCM_ContentTime
 
-*/
+    // TODO: Time series information: DCM_SeriesType, DCM_NumberOfTimeSlices, DCM_ActualFrameDuration
 
 }
 
@@ -185,7 +200,15 @@ void sdtTagMapping::setupSeriesConfiguration(int series)
             }
             else
             {
-                currentOptions[key]=value;
+                // Clear all default mappings if ClearDefaults=true is found
+                if ((key==SDT_OPT_CLEARDEFAULTS) && (value==SDT_TRUE))
+                {
+                    currentTags.clear();
+                }
+                else
+                {
+                    currentOptions[key]=value;
+                }
             }
         }
     }
@@ -209,7 +232,15 @@ void sdtTagMapping::setupSeriesConfiguration(int series)
             }
             else
             {
-                currentOptions[key]=value;
+                // Clear all default mappings if ClearDefaults=true is found
+                if ((key==SDT_OPT_CLEARDEFAULTS) && (value==SDT_TRUE))
+                {
+                    currentTags.clear();
+                }
+                else
+                {
+                    currentOptions[key]=value;
+                }
             }
         }
     }
@@ -223,5 +254,25 @@ void sdtTagMapping::setupSeriesConfiguration(int series)
 
 void sdtTagMapping::evaluateSeriesOptions(int series)
 {
-    // TODO: Implement processing options / macros, e.g. color=true
+    // Implements processing options / macros, e.g. Color=true
+
+    if (currentOptions.find(SDT_OPT_COLOR)!=currentOptions.end())
+    {
+        // If the current series should be in color mode
+        if (currentOptions[SDT_OPT_COLOR]==SDT_TRUE)
+        {
+            addTag("0028", "0004", "RGB"                ); // Photometric Interpretation
+            addTag("0008", "0064", "WSD"                ); // Conversion Type
+            addTag("0028", "1055", "Algo1"              ); // Window Center & Width Explanation
+            addTag("0028", "0002", "3"                  ); // Samples per Pixel
+            addTag("0028", "0100", "8"                  ); // Bits Allocated
+            addTag("0028", "0101", "8"                  ); // Bits Allocated
+            addTag("0028", "0102", "7"                  ); // High Bit
+            addTag("0028", "0106", "0"                  ); // Smallest Image Pixel Value
+            addTag("0028", "0107", "255"                ); // Largest Image Pixel Value
+            addTag("0028", "1050", "128"                ); // Window Center
+            addTag("0028", "1051", "256"                ); // Window Width
+        }
+    }
 }
+

@@ -1,7 +1,6 @@
 #include "sdt_tagwriter.h"
 #include "sdt_twixreader.h"
 
-
 #include "dcmtk/dcmdata/dcpath.h"
 #include "dcmtk/dcmdata/dcerror.h"
 #include "dcmtk/dcmdata/dctk.h"
@@ -9,6 +8,9 @@
 #include "external/mdfdsman.h"
 #include "dcmtk/ofstd/ofstd.h"
 #include "dcmtk/dcmdata/dctk.h"
+
+#include <stdlib.h>
+#include <climits>
 
 
 sdtTagWriter::sdtTagWriter()
@@ -72,7 +74,15 @@ void sdtTagWriter::setMapping(stringmap* currentMapping, stringmap* currentOptio
     mapping=currentMapping;
     options=currentOptions;
 
-    // TODO: Update series offset
+    if (options->find(SDT_OPT_SERIESOFFSET)!=options->end())
+    {
+        // Read the series offset from the options. Make sure it's set to 0 if the value is invalid
+        seriesOffset=strtol((*options)[SDT_OPT_SERIESOFFSET].c_str(),nullptr,10);
+        if ((seriesOffset==LONG_MAX) || (seriesOffset==LONG_MIN))
+        {
+            seriesOffset=0;
+        }
+    }
 }
 
 
@@ -130,7 +140,7 @@ bool sdtTagWriter::writeFile()
 
         if (result.bad())
         {
-            LOG("ERROR: Unable to set tag " << tag.first << " in " << inputFilename);
+            LOG("ERROR: Unable to set tag " << tag.first << " in " << inputFilename << " (" << result.text() << ")");
         }
     }
 
@@ -215,15 +225,10 @@ bool sdtTagWriter::getTagValue(std::string mapping, std::string& value)
 
         value=twixReader->getValue(rawfileKey);
 
-        //LOG("PRE:  " << value << "  FUNCT=" << func << "  ARG=" << arg);
-
         if (func=="DIV")
         {
             value=eval_DIV(value, arg);
         }
-
-        //LOG("POST: " << value);
-        //LOG("FUNC: <" << rawfileKey << "> <" << arg << ">");
 
         return true;
     }
@@ -241,13 +246,8 @@ std::string sdtTagWriter::eval_DIV(std::string value, std::string arg)
     size_t sepPos=arg.find(",");
     if (sepPos!=std::string::npos)
     {
-        //LOG("Fullarg=" << arg);
-
         decimals=atoi(arg.substr(sepPos+1,std::string::npos).c_str());
-        //LOG("dec=" << arg.substr(sepPos+1,std::string::npos));
-
         arg=arg.substr(0,sepPos);
-        //LOG("arg=" << arg);
     }
 
     float val=stof(value);
@@ -260,7 +260,6 @@ std::string sdtTagWriter::eval_DIV(std::string value, std::string arg)
         // If maximum number of decimals has been specified
         if (decimals>=0)
         {
-            //LOG(" pre=" << value);
             sepPos=value.find(".");
             if (sepPos!=std::string::npos)
             {
@@ -277,7 +276,6 @@ std::string sdtTagWriter::eval_DIV(std::string value, std::string arg)
                     value.erase(eraseStart,std::string::npos);
                 }
             }
-            //LOG("post=" << value);
         }
 
         return value;
