@@ -284,6 +284,7 @@ bool sdtMainclass::generateFileList()
     int series     =0;
     int slice      =0;
     seriesmode mode=NOT_DEFINED;
+    int fileCount  =0;
 
     fs::path inputPath(std::string(inputDir.c_str()));
 
@@ -304,9 +305,12 @@ bool sdtMainclass::generateFileList()
             {
                 // Store the filename in the series and slice mapping
                 seriesMap[series].sliceMap[slice]=dir_entry.path().filename().string();
+                fileCount++;
             }
         }
     }
+
+    LOG("Processing " << fileCount << " files in " << seriesMap.size() << " series.");
 
     /* // DEBUG: For outputting file list
     for(auto entry : seriesMap)

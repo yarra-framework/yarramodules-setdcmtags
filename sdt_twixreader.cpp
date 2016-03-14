@@ -109,7 +109,7 @@ bool sdtTWIXReader::readFile(std::string filename)
     headerEnd=lastMeasOffset+headerLength;
 
     // Parse header
-    LOG("Header size is " << headerLength);
+    LOG("Header size is " << headerLength << " bytes.");
     LOG("");
 
     if (dbgDumpProtocol)
@@ -488,6 +488,7 @@ void sdtTWIXReader::prepareSearchList()
     addSearchEntry("AngioFlag",                  "<ParamString.\"tAngioFlag\">"             , tSTRING);
     addSearchEntry("NumberOfAverages",           "<ParamLong.\"NAveMeas\">"                 , tLONG  );
 
+    addSearchEntry("FrameOfReference",           "<ParamString.\"FrameOfReference\">"       , tSTRING);
     addSearchEntry("PatientPosition",            "<ParamString.\"tPatientPosition\">"       , tSTRING);
     addSearchEntry("BodyPartExamined",           "<ParamString.\"tBodyPartExamined\">"      , tSTRING);
     addSearchEntry("Laterality",                 "<ParamString.\"tLaterality\">"            , tSTRING, false);
@@ -498,6 +499,8 @@ void sdtTWIXReader::prepareSearchList()
     addSearchEntry("ReadoutOSFactor",            "<ParamDouble.\"flReadoutOSFactor\">"      , tDOUBLE);
     addSearchEntry("SpacingBetweenSlices",       "<ParamArray.\"SpacingBetweenSlices\">"    , tARRAY );
 
+    addSearchEntry("ScanTimeSec",                "<ParamLong.\"lScanTimeSec\">"             , tLONG  );
+    addSearchEntry("TotalScanTimeSec",           "<ParamLong.\"lTotalScanTimeSec\">"        , tLONG  );
 
 /*
     common.StudyDate = daystr;
