@@ -17,6 +17,12 @@
 #define SDT_VAR_UID_SERIES "uid_series"
 #define SDT_VAR_UID_STUDY  "uid_study"
 #define SDT_VAR_ACC        "acc"
+#define SDT_VAR_PROC_TIME  "proc_time"
+#define SDT_VAR_PROC_DATE  "proc_date"
+#define SDT_VAR_CREA_TIME  "crea_time"
+#define SDT_VAR_CREA_DATE  "crea_date"
+#define SDT_VAR_ACQ_TIME   "acq_time"
+#define SDT_VAR_ACQ_DATE   "acq_date"
 
 #define SDT_OPT_SERIESOFFSET  "SeriesOffset"
 #define SDT_OPT_COLOR         "Color"

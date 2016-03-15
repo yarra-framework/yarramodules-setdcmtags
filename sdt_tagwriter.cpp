@@ -18,6 +18,10 @@ sdtTagWriter::sdtTagWriter()
     slice    =0;
     series   =0;
     seriesUID="";
+    studyUID ="";
+
+    approxCreationTime=true;
+    raidDateTime="";
 
     inputFilename ="";
     outputFilename="";
@@ -88,6 +92,8 @@ void sdtTagWriter::setMapping(stringmap* currentMapping, stringmap* currentOptio
 
 bool sdtTagWriter::processFile()
 {
+    calculateVariables();
+
     tags.clear();
 
     for (auto mapEntry : *mapping)
@@ -285,3 +291,40 @@ std::string sdtTagWriter::eval_DIV(std::string value, std::string arg)
         return "0";
     }
 }
+
+
+void sdtTagWriter::calculateVariables()
+{
+    // Calculate all internal variables that need to be updated for different slices / series
+
+    // TODO
+}
+
+
+void sdtTagWriter::prepareTime()
+{
+    if (!raidDateTime.empty())
+    {
+        // If an exact acquisition time has been provided through the task file
+
+        // TODO
+
+        approxCreationTime=false;
+    }
+    else
+    {
+        // If an exact acquisition time has not been provided, use the time obtained
+        // from the frame-of-reference entry
+        LOG("WARNING: Using approximative acquisition time based on reference scans.");
+
+        // TODO
+
+        approxCreationTime=true;
+    }
+
+    processingTime=second_clock::local_time();
+
+    // TODO
+
+}
+

@@ -18,6 +18,7 @@ sdtMainclass::sdtMainclass()
     rawFile  ="";
 
     accessionNumber    ="";
+    taskFile           ="";
     modeFile           ="";
     dynamicSettingsFile="";
     extendedLog        =false;
@@ -40,6 +41,7 @@ sdtMainclass::~sdtMainclass()
 #define SDT_PARAM_DYN "-d"
 #define SDT_PARAM_LOG "-l"
 #define SDT_PARAM_VER "-v"
+#define SDT_PARAM_TSK "-t"
 
 
 void sdtMainclass::perform(int argc, char *argv[])
@@ -52,6 +54,7 @@ void sdtMainclass::perform(int argc, char *argv[])
 
     cmdLine.addGroup("parameters:");
     cmdLine.addOption(SDT_PARAM_ACC, "", 1, "", "Accession number");
+    cmdLine.addOption(SDT_PARAM_TSK, "", 1, "", "Path and name of task file");
     cmdLine.addOption(SDT_PARAM_MOD, "", 1, "", "Path and name of mode file");
     cmdLine.addOption(SDT_PARAM_DYN, "", 1, "", "Path and name of dynamic settings");
     cmdLine.addOption(SDT_PARAM_LOG, "", 0, "", "Extended log output for debugging");
@@ -89,6 +92,15 @@ void sdtMainclass::perform(int argc, char *argv[])
             if (cmdLine.getValue(accessionNumber) != OFCommandLine::VS_Normal)
             {
                 LOG("ERROR: Unable to read ACC number.");
+                return;
+            }
+        }
+
+        if (cmdLine.findOption(SDT_PARAM_TSK))
+        {
+            if (cmdLine.getValue(taskFile) != OFCommandLine::VS_Normal)
+            {
+                LOG("ERROR: Unable to read task-file path.");
                 return;
             }
         }
@@ -214,6 +226,9 @@ bool sdtMainclass::processSeries()
 
     // Forward the ACC number
     tagWriter.setAccessionNumber(std::string(accessionNumber.c_str()));
+
+    // Define the creation and processing
+    tagWriter.prepareTime();
 
     // Loop over all series
     for (auto series : seriesMap)

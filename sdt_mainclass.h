@@ -56,6 +56,7 @@ public:
     OFCmdString          accessionNumber;
     OFCmdString          modeFile;
     OFCmdString          dynamicSettingsFile;
+    OFCmdString          taskFile;
     bool                 extendedLog;
 
     std::string          studyUID;
