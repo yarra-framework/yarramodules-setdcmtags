@@ -257,6 +257,8 @@ bool sdtTagWriter::getTagValue(std::string mapping, std::string& value)
 
 std::string sdtTagWriter::eval_DIV(std::string value, std::string arg)
 {
+    //LOG("DBG: " << value << " " << arg);
+
     if (value.empty())
     {
         return "0";

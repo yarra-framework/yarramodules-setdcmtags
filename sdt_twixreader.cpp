@@ -132,7 +132,7 @@ bool sdtTWIXReader::readFile(std::string filename)
         parseXProtLine(line, file);
 
         // When the MRProt section is reached, parse it and terminate
-        if (line.find("### ASCCONV BEGIN ###")!=std::string::npos)
+        if (line.find("### ASCCONV BEGIN ")!=std::string::npos)
         {
             readMRProt(file);
             terminateParsing=true;
@@ -260,6 +260,9 @@ static std::string sdt_wipKey_VD="sWipMemBlock";
 
 void sdtTWIXReader::parseMRProtLine(std::string line)
 {
+    // Remove all tabs from the line (as introduced in VD)
+    line.erase(std::remove(line.begin(), line.end(), '\t'), line.end());
+
     size_t equalPos=line.find("=");
 
     if (equalPos==std::string::npos)

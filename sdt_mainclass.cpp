@@ -153,6 +153,8 @@ void sdtMainclass::perform(int argc, char *argv[])
         return;
     }
 
+    twixReader.setDebugOptions(extendedLog);
+
     // Now parse the raw-data file and extract all needed information
     if (!twixReader.readFile(std::string(rawFile.c_str())))
     {
