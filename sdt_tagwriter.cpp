@@ -203,6 +203,16 @@ bool sdtTagWriter::getTagValue(std::string mapping, std::string& value)
             }
         }
 
+        if (variable==SDT_VAR_PROC_TIME)
+        {
+            formatDateTime("%H%M%s", processingTime, value);
+        }
+
+        if (variable==SDT_VAR_PROC_DATE)
+        {
+            formatDateTime("%Y%m%d", processingTime, value);
+        }
+
         if (variable==SDT_VAR_KEEP)
         {
             value="";
@@ -247,6 +257,11 @@ bool sdtTagWriter::getTagValue(std::string mapping, std::string& value)
 
 std::string sdtTagWriter::eval_DIV(std::string value, std::string arg)
 {
+    if (value.empty())
+    {
+        return "0";
+    }
+
     int decimals=-1;
 
     size_t sepPos=arg.find(",");
@@ -256,8 +271,17 @@ std::string sdtTagWriter::eval_DIV(std::string value, std::string arg)
         arg=arg.substr(0,sepPos);
     }
 
-    float val=stof(value);
-    float div=stof(arg);
+    float val=0;
+    float div=0;
+    try
+    {
+        val=stof(value);
+        div=stof(arg);
+    }
+    catch (const std::exception&)
+    {
+        return "0";
+    }
 
     if (div!=0)
     {

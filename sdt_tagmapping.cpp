@@ -83,6 +83,9 @@ void sdtTagMapping::setupDefaultMapping()
     addTag("0029", "0011", "SIEMENS MEDCOM HEADER2"     ); // Siemens Private Tag
     addTag("0029", "1018", "MR"                         ); // Siemens Private Tag
 
+    addTag("0008", "0023", "#proc_date"                 ); // Content Date
+    addTag("0008", "0033", "#proc_time"                 ); // Content Time
+
 
     // TODO: Set slice orientation / location: DCM_ImagePositionPatient, DCM_ImageOrientationPatient, DCM_SliceThickness, DCM_PixelSpacing, DCM_SliceLocation, DCM_PositionReferenceIndicator
 

@@ -5,7 +5,7 @@
 #include <map>
 #include <vector>
 
-#define SDT_VERSION "0.1"
+#define SDT_VERSION "0.1b1"
 
 #define SDT_TAG_RAW '@'
 #define SDT_TAG_VAR '#'
@@ -19,8 +19,8 @@
 #define SDT_VAR_ACC        "acc"
 #define SDT_VAR_PROC_TIME  "proc_time"
 #define SDT_VAR_PROC_DATE  "proc_date"
-#define SDT_VAR_CREA_TIME  "crea_time"
-#define SDT_VAR_CREA_DATE  "crea_date"
+#define SDT_VAR_CREA_TIME  "create_time"
+#define SDT_VAR_CREA_DATE  "create_date"
 #define SDT_VAR_ACQ_TIME   "acq_time"
 #define SDT_VAR_ACQ_DATE   "acq_date"
 

@@ -65,6 +65,8 @@ protected:
     int seriesOffset;
 
     std::string eval_DIV(std::string value, std::string arg);
+
+    void formatDateTime(std::string const& format, ptime const& date_time, std::string& result);
 };
 
 
@@ -79,6 +81,23 @@ inline void sdtTagWriter::setRAIDCreationTime(std::string datetimeString)
     raidDateTime=datetimeString;
 }
 
+
+inline void sdtTagWriter::formatDateTime(std::string const& format, ptime const& date_time, std::string& result)
+{
+    try
+    {
+        time_facet* facet=new time_facet(format.c_str());
+        std::ostringstream stream;
+        stream.imbue(std::locale(stream.getloc(), facet));
+        stream << date_time;
+        result=stream.str();
+    }
+    catch (const std::exception&)
+    {
+        LOG("ERROR: Conversion error for " << date_time);
+        result="";
+    }
+}
 
 
 #endif // SDT_TAGWRITER_H
