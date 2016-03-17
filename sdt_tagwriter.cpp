@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <climits>
 
+#include "boost/date_time/posix_time/posix_time.hpp"
+
 
 sdtTagWriter::sdtTagWriter()
 {
@@ -96,7 +98,7 @@ bool sdtTagWriter::processFile()
 
     tags.clear();
 
-    for (auto mapEntry : *mapping)
+    for (auto& mapEntry : *mapping)
     {
         std::string dcmPath=mapEntry.first;
         std::string value="";
@@ -140,7 +142,7 @@ bool sdtTagWriter::writeFile()
     }
 
     // Modify DICOM tags in loaded file
-    for (auto tag : tags)
+    for (auto& tag : tags)
     {
         result=ds_man.modifyOrInsertPath(tag.first.c_str(), tag.second.c_str(), OFFalse);
 
@@ -183,8 +185,6 @@ bool sdtTagWriter::getTagValue(std::string mapping, std::string& value)
 
         if (variable==SDT_VAR_UID_SERIES)
         {
-            // TODO: Integrate slice offset
-
             value=seriesUID;
         }
 
@@ -211,6 +211,26 @@ bool sdtTagWriter::getTagValue(std::string mapping, std::string& value)
         if (variable==SDT_VAR_PROC_DATE)
         {
             formatDateTime("%Y%m%d", processingTime, value);
+        }
+
+        if (variable==SDT_VAR_CREA_TIME)
+        {
+            formatDateTime("%H%M%s", creationTime, value);
+        }
+
+        if (variable==SDT_VAR_CREA_DATE)
+        {
+            formatDateTime("%Y%m%d", creationTime, value);
+        }
+
+        if (variable==SDT_VAR_ACQ_TIME)
+        {
+            formatDateTime("%H%M%s", acquisitionTime, value);
+        }
+
+        if (variable==SDT_VAR_ACQ_DATE)
+        {
+            formatDateTime("%Y%m%d", acquisitionTime, value);
         }
 
         if (variable==SDT_VAR_KEEP)
@@ -329,11 +349,14 @@ void sdtTagWriter::calculateVariables()
 
 void sdtTagWriter::prepareTime()
 {
+    processingTime =second_clock::local_time();
+
     if (!raidDateTime.empty())
     {
         // If an exact acquisition time has been provided through the task file
 
         // TODO
+        creationTime   =second_clock::local_time();
 
         approxCreationTime=false;
     }
@@ -343,14 +366,24 @@ void sdtTagWriter::prepareTime()
         // from the frame-of-reference entry
         LOG("WARNING: Using approximative acquisition time based on reference scans.");
 
-        // TODO
-
+        std::string timeString=twixReader->getValue("FrameOfReference_Date")+" "+twixReader->getValue("FrameOfReference_Time");
+        try
+        {
+            creationTime=ptime(time_from_string(timeString));
+        }
+        catch (const std::exception&)
+        {
+            creationTime=second_clock::local_time();
+        }
         approxCreationTime=true;
     }
 
-    processingTime=second_clock::local_time();
+
+    // Unless overwritten via an option, the acquisition time should be identical to the
+    acquisitionTime=creationTime;
+
+    // If dynamic mode has been selected, add the time interval to the base time (creationTime)
 
     // TODO
-
 }
 

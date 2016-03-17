@@ -71,8 +71,9 @@ public:
     void removeEnclosingWhitespace(std::string& line);
     void removePrecisionTag(std::string& line);
     void findBraces(std::string& line, std::ifstream& file);
+    bool splitFrameOfReferenceTime(std::string input, std::string& timeString, std::string& dateString);
 
-    void calculateAdditionalValues();
+    void calculateAdditionalValues();    
 
     fileVersionType   fileVersion;
     sdtTwixSearchList searchList;

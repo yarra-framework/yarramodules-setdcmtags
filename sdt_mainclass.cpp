@@ -202,7 +202,7 @@ void sdtMainclass::perform(int argc, char *argv[])
 bool sdtMainclass::generateUIDs()
 {
     // Loop over all series to generate a different UID for each series
-    for (auto series : seriesMap)
+    for (auto& series : seriesMap)
     {
         char uid[100];
         dcmGenerateUniqueIdentifier(uid, SITE_SERIES_UID_ROOT);
@@ -239,7 +239,7 @@ bool sdtMainclass::processSeries()
         tagMapping.setupSeriesConfiguration(seriesID);
 
         // Loop over all slices of series
-        for (auto slice : series.second.sliceMap)
+        for (auto& slice : series.second.sliceMap)
         {
             // Inform helper class about current file name and slice/series counters
             tagWriter.setFile(slice.second, slice.first, seriesID, series.second.uid, studyUID);
@@ -305,9 +305,9 @@ bool sdtMainclass::generateFileList()
 
     fs::path inputPath(std::string(inputDir.c_str()));
 
-    for(const auto &dir_entry : boost::make_iterator_range(fs::directory_iterator(inputPath), {}))
+    for(const auto& dir_entry : boost::make_iterator_range(fs::directory_iterator(inputPath), {}))
     {
-        if (dir_entry.path().extension() == ".dcm")
+        if (dir_entry.path().extension()==".dcm")
         {
             // Extract the slice and series number from the filename
             success=parseFilename(dir_entry.path().stem().string(), mode, series, slice);

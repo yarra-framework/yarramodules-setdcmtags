@@ -52,9 +52,9 @@ void sdtTagMapping::setupDefaultMapping()
     addTag("0008", "1010", "@StationName"               ); // Station Name
 
     addTag("0008", "0050", "#acc"                       ); // Accession Number
-    addTag("0020", "000D", "#uid_study"                 ); // Study Instance UID
     addTag("0020", "0010", "#uid_study"                 ); // Study ID
     addTag("0020", "0052", "#uid_study"                 ); // Frame of Reference UID
+    addTag("0020", "000D", "#uid_study"                 ); // Study Instance UID
     addTag("0020", "000E", "#uid_series"                ); // Series Instance UID
     addTag("0020", "0011", "#series"                    ); // Series Number
     addTag("0020", "0013", "#slice"                     ); // Instance Number
@@ -83,17 +83,23 @@ void sdtTagMapping::setupDefaultMapping()
     addTag("0029", "0011", "SIEMENS MEDCOM HEADER2"     ); // Siemens Private Tag
     addTag("0029", "1018", "MR"                         ); // Siemens Private Tag
 
-    addTag("0008", "0023", "#proc_date"                 ); // Content Date
-    addTag("0008", "0033", "#proc_time"                 ); // Content Time
+    addTag("0008", "0020", "#create_date"               ); // Study Date
+    addTag("0008", "0030", "#create_time"               ); // Study Time
 
+    addTag("0008", "0021", "#acq_date"                  ); // Series Date
+    addTag("0008", "0031", "#acq_time"                  ); // Series Time
+
+    addTag("0008", "0022", "#acq_date"                  ); // Acquisition Date
+    addTag("0008", "0032", "#acq_time"                  ); // Acquisition Time
+
+    addTag("0008", "0023", "#proc_date"                 ); // Content/Image Date
+    addTag("0008", "0033", "#proc_time"                 ); // Content/Image Time
+
+    addTag("0008", "0012", "#proc_date"                 ); // Instance Creation Date
+    addTag("0008", "0013", "#proc_time"                 ); // Instance Creation Time
 
     // TODO: Set slice orientation / location: DCM_ImagePositionPatient, DCM_ImageOrientationPatient, DCM_SliceThickness, DCM_PixelSpacing, DCM_SliceLocation, DCM_PositionReferenceIndicator
-
-    // TODO: Set time information: DCM_InstanceCreationDate, DCM_StudyDate, DCM_SeriesDate, DCM_AcquisitionDate, DCM_ContentDate, DCM_StudyTime
-    //                             DCM_InstanceCreationTime, DCM_SeriesTime, DCM_AcquisitionTime, DCM_ContentTime
-
     // TODO: Time series information: DCM_SeriesType, DCM_NumberOfTimeSlices, DCM_ActualFrameDuration
-
 }
 
 

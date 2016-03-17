@@ -225,6 +225,19 @@ void sdtTWIXReader::calculateAdditionalValues()
 
         values["PatientSex_DCM"]=patientSex;
     }
+
+    if (values.find("FrameOfReference")!=values.end())
+    {
+        // Extract the time stamp from the frame of reference entry. This will be used as approximate
+        // acquisition time of no exact time point has been specified via the task file
+        std::string dateString="";
+        std::string timeString="";
+        if (splitFrameOfReferenceTime(values["FrameOfReference"], timeString, dateString))
+        {
+            values["FrameOfReference_Date"]=dateString;
+            values["FrameOfReference_Time"]=timeString;
+        }
+    }
 }
 
 
@@ -458,6 +471,34 @@ void sdtTWIXReader::findBraces(std::string& line, std::ifstream& file)
 }
 
 
+bool sdtTWIXReader::splitFrameOfReferenceTime(std::string input, std::string& timeString, std::string& dateString)
+{
+    // Format is 1.3.12.2.1107.5.2.30.25654.1.20130506212248515.0.0.0
+    timeString="";
+    dateString="";
+
+    // Remove the numbers and dots in front of the date/time section
+    int dotPos=0;
+
+    for (int i=0; i<10; i++)
+    {
+        dotPos=input.find(".",dotPos+1);
+
+        if (dotPos==std::string::npos)
+        {
+            // String does not match the usual format
+            return false;
+        }
+    }
+    input.erase(0,dotPos+1);
+
+    dateString=input.substr(0,4)+"-"+input.substr(4,2)+"-"+input.substr(6,2);
+    timeString=input.substr(8,2)+":"+input.substr(10,2)+":"+input.substr(12,2);
+
+    return true;
+}
+
+
 void sdtTWIXReader::prepareSearchList()
 {
     addSearchEntry("PatientName",                "<ParamString.\"tPatientName\">"           , tSTRING);
@@ -504,17 +545,6 @@ void sdtTWIXReader::prepareSearchList()
 
     addSearchEntry("ScanTimeSec",                "<ParamLong.\"lScanTimeSec\">"             , tLONG  );
     addSearchEntry("TotalScanTimeSec",           "<ParamLong.\"lTotalScanTimeSec\">"        , tLONG  );
-
-/*
-    common.StudyDate = daystr;
-    common.SeriesDate = daystr;
-    common.AcquisitionDate = daystr;
-    common.ContentDate = dateofseccapture;
-    common.StudyTime = studytime;
-    common.SeriesTime = studytime;
-    common.AcquisitionTime = studytime;
-    common.ContentTime = timeofseccapture;
-*/
 
 }
 

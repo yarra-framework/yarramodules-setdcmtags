@@ -49,7 +49,7 @@ LIBS =  -ldcmdata -loflog -lofstd -lz -lpthread -lrt
 
 LIBS += $$BOOST_PATH/libboost_filesystem.a
 LIBS += $$BOOST_PATH/libboost_system.a
-
+LIBS += $$BOOST_PATH/libboost_date_time.a
 
 #LIBS += -loflog -pthread -lofstd -ldcmdata -ldcmnet
 #LIBS += -lrt -lnsl -lm -lz
