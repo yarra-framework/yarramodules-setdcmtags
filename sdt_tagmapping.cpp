@@ -1,6 +1,7 @@
 #include "sdt_tagmapping.h"
 
 #include <boost/foreach.hpp>
+#include <boost/algorithm/string.hpp>
 
 
 sdtTagMapping::sdtTagMapping()
@@ -268,7 +269,7 @@ void sdtTagMapping::evaluateSeriesOptions(int series)
     if (currentOptions.find(SDT_OPT_COLOR)!=currentOptions.end())
     {
         // If the current series should be in color mode
-        if (currentOptions[SDT_OPT_COLOR]==SDT_TRUE)
+        if (boost::to_upper_copy(currentOptions[SDT_OPT_COLOR])==SDT_TRUE)
         {
             addTag("0028", "0004", "RGB"                ); // Photometric Interpretation
             addTag("0008", "0064", "WSD"                ); // Conversion Type

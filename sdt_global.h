@@ -28,7 +28,12 @@
 #define SDT_OPT_COLOR         "Color"
 #define SDT_OPT_CLEARDEFAULTS "ClearDefaults"
 
-#define SDT_TRUE             "true"
+#define SDT_OPT_SERIESMODE               "SeriesMode"
+#define SDT_OPT_SERIESMODE_TIME          "TIME"
+#define SDT_OPT_SERIESMODE_FRAMEDURATION "FrameDuration"
+#define SDT_OPT_TIMEPOINT                "Time"
+
+#define SDT_TRUE                         "TRUE"
 
 
 #define LOG(x) std::cout << x << std::endl;

@@ -17,8 +17,11 @@
 
 sdtTagWriter::sdtTagWriter()
 {
-    slice    =0;
-    series   =0;
+    slice      =0;
+    series     =0;
+    sliceCount =0;
+    seriesCount=0;
+
     seriesUID="";
     studyUID ="";
 
@@ -63,15 +66,17 @@ void sdtTagWriter::setFolders(std::string inputFolder, std::string outputFolder)
 }
 
 
-void sdtTagWriter::setFile(std::string filename, int currentSlice, int currentSeries, std::string currentSeriesUID, std::string currentStudyUID)
+void sdtTagWriter::setFile(std::string filename, int currentSlice, int totalSlices, int currentSeries, int totalSeries, std::string currentSeriesUID, std::string currentStudyUID)
 {
     inputFilename =inputPath +filename;
     outputFilename=outputPath+filename;
 
-    slice    =currentSlice;
-    series   =currentSeries;
-    seriesUID=currentSeriesUID;
-    studyUID =currentStudyUID;
+    slice      =currentSlice;
+    series     =currentSeries;
+    seriesUID  =currentSeriesUID;
+    studyUID   =currentStudyUID;
+    sliceCount =totalSlices;
+    seriesCount=totalSeries;
 }
 
 
@@ -343,27 +348,61 @@ void sdtTagWriter::calculateVariables()
 {
     // Calculate all internal variables that need to be updated for different slices / series
 
-    // TODO
+    // If dynamic mode has been selected, add the time interval to the base time (creationTime)
+    if (options->find(SDT_OPT_SERIESMODE)!=options->end())
+    {
+        // If the current series should be in color mode
+        if (boost::to_upper_copy((*options)[SDT_OPT_SERIESMODE])==SDT_OPT_SERIESMODE_TIME)
+        {
+
+            if (options->find(SDT_OPT_TIMEPOINT)!=options->end())
+            {
+                // TODO
+                //if (SDT_OPT_TIMEPOINT)
+            }
+            else
+            {
+                double frameTime=1;
+                std::string scanTimeStr=twixReader->getValue("TotalScanTimeSec");
+
+                if (!scanTimeStr.empty())
+                {
+                    frameTime=std::stod(scanTimeStr);
+                    frameTime=frameTime/double(seriesCount) * (0.5 + series - 1);
+                }
+
+                // TODO: Divide acquisition duration by number of series, or overwrite with
+                //       explicitly given frame time.
+
+                //LOG("DBG: Total duration " << std::stod(scanTimeStr));
+                //LOG("DBG: Time series mode, total duration = " << frameTime);
+            }
+        }
+    }
+
+    // TOOD: Calculate given acquisition time point
+    // TODO: Also adapt the duration tag if dynamic mode has been selected (matching the frame time)
+
 }
 
 
 void sdtTagWriter::prepareTime()
 {
-    processingTime =second_clock::local_time();
+    processingTime=second_clock::local_time();
 
     if (!raidDateTime.empty())
     {
         // If an exact acquisition time has been provided through the task file
-
-        // TODO
-        creationTime   =second_clock::local_time();
-
         approxCreationTime=false;
+
+        // TODO: Implement task reader
+        creationTime=second_clock::local_time();  // dbg
     }
     else
     {
         // If an exact acquisition time has not been provided, use the time obtained
         // from the frame-of-reference entry
+        approxCreationTime=true;
         LOG("WARNING: Using approximative acquisition time based on reference scans.");
 
         std::string timeString=twixReader->getValue("FrameOfReference_Date")+" "+twixReader->getValue("FrameOfReference_Time");
@@ -375,15 +414,10 @@ void sdtTagWriter::prepareTime()
         {
             creationTime=second_clock::local_time();
         }
-        approxCreationTime=true;
     }
-
 
     // Unless overwritten via an option, the acquisition time should be identical to the
     acquisitionTime=creationTime;
-
-    // If dynamic mode has been selected, add the time interval to the base time (creationTime)
-
-    // TODO
 }
+
 

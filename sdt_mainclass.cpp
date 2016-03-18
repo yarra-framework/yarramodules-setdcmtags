@@ -242,7 +242,10 @@ bool sdtMainclass::processSeries()
         for (auto& slice : series.second.sliceMap)
         {
             // Inform helper class about current file name and slice/series counters
-            tagWriter.setFile(slice.second, slice.first, seriesID, series.second.uid, studyUID);
+            tagWriter.setFile(slice.second,                                // filename
+                              slice.first, series.second.sliceMap.size(),  // current slice, total slices
+                              seriesID, seriesMap.size(),                  // current series, total series
+                              series.second.uid, studyUID);                // series UID, study UID
             tagWriter.setMapping(&tagMapping.currentTags, &tagMapping.currentOptions);
 
             if (!tagWriter.processFile())
@@ -298,8 +301,8 @@ bool sdtMainclass::checkFolderExistence()
 bool sdtMainclass::generateFileList()
 {
     bool success   =true;
-    int series     =0;
-    int slice      =0;
+    int series     =1;
+    int slice      =1;
     seriesmode mode=NOT_DEFINED;
     int fileCount  =0;
 
@@ -347,8 +350,8 @@ bool sdtMainclass::generateFileList()
 
 bool sdtMainclass::parseFilename(std::string filename, seriesmode& mode, int& series, int& slice)
 {
-    series=0;
-    slice=0;
+    series=1;
+    slice=1;
 
     // Detect if the filename is of from slice[no].dcm or series[no].slice[no].dcm
     seriesmode neededMode=SINGLE_SERIES;

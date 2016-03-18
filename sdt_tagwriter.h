@@ -23,7 +23,7 @@ public:
     void setFolders(std::string inputFolder, std::string outputFolder);
     void setAccessionNumber(std::string acc);
 
-    void setFile(std::string filename, int currentSlice, int currentSeries, std::string currentSeriesUID, std::string currentStudyUID); 
+    void setFile(std::string filename, int currentSlice, int totalSlices, int currentSeries, int totalSeries, std::string currentSeriesUID, std::string currentStudyUID);
     void setMapping(stringmap* currentMapping, stringmap* currentOptions);
 
     void setRAIDCreationTime(std::string datetimeString);
@@ -37,6 +37,8 @@ protected:
     std::string seriesUID;
     std::string studyUID;
     std::string accessionNumber;
+    int         sliceCount;
+    int         seriesCount;
 
     bool        approxCreationTime;
     std::string raidDateTime;
