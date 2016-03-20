@@ -348,21 +348,26 @@ void sdtTagWriter::calculateVariables()
 {
     // Calculate all internal variables that need to be updated for different slices / series
 
+    double frameTime=0;
+    bool   timeOffsetFound=false;
+
+    if (options->find(SDT_OPT_TIMEOFFSET)!=options->end())
+    {
+        // TODO: Read time offset and convert into float
+        //if (SDT_OPT_TIMEPOINT)
+
+        timeOffsetFound=true;
+    }
+
+
     // If dynamic mode has been selected, add the time interval to the base time (creationTime)
     if (options->find(SDT_OPT_SERIESMODE)!=options->end())
     {
         // If the current series should be in color mode
         if (boost::to_upper_copy((*options)[SDT_OPT_SERIESMODE])==SDT_OPT_SERIESMODE_TIME)
         {
-
-            if (options->find(SDT_OPT_TIMEPOINT)!=options->end())
+            if (!timeOffsetFound)
             {
-                // TODO
-                //if (SDT_OPT_TIMEPOINT)
-            }
-            else
-            {
-                double frameTime=1;
                 std::string scanTimeStr=twixReader->getValue("TotalScanTimeSec");
 
                 if (!scanTimeStr.empty())
@@ -371,8 +376,7 @@ void sdtTagWriter::calculateVariables()
                     frameTime=frameTime/double(seriesCount) * (0.5 + series - 1);
                 }
 
-                // TODO: Divide acquisition duration by number of series, or overwrite with
-                //       explicitly given frame time.
+                // TODO: Adapt the duration tag if dynamic mode has been selected (matching the frame time)
 
                 //LOG("DBG: Total duration " << std::stod(scanTimeStr));
                 //LOG("DBG: Time series mode, total duration = " << frameTime);
@@ -380,9 +384,10 @@ void sdtTagWriter::calculateVariables()
         }
     }
 
-    // TOOD: Calculate given acquisition time point
-    // TODO: Also adapt the duration tag if dynamic mode has been selected (matching the frame time)
-
+    if (frameTime!=0)
+    {
+        // Add frametime to creation time
+    }
 }
 
 
