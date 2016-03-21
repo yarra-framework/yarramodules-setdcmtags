@@ -30,7 +30,7 @@
 
 #define SDT_OPT_SERIESMODE               "SeriesMode"
 #define SDT_OPT_SERIESMODE_TIME          "TIME"
-#define SDT_OPT_SERIESMODE_FRAMEDURATION "FrameDuration"
+#define SDT_OPT_FRAMEDURATION            "FrameDuration"
 #define SDT_OPT_TIMEOFFSET               "TimeOffset"
 
 #define SDT_TRUE                         "TRUE"

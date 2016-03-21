@@ -351,12 +351,39 @@ void sdtTagWriter::calculateVariables()
     double frameTime=0;
     bool   timeOffsetFound=false;
 
+    double frameDuration=0;
+    bool   frameDurationFound=false;
+
     if (options->find(SDT_OPT_TIMEOFFSET)!=options->end())
     {
-        // TODO: Read time offset and convert into float
-        //if (SDT_OPT_TIMEPOINT)
+        // Read time offset from options and convert into float
+        std::string frameTimeStr=(*options)[SDT_OPT_TIMEOFFSET];
+        try
+        {
+            frameTime=stof(frameTimeStr);
+        }
+        catch (const std::exception&)
+        {
+            frameTime=0;
+        }
 
         timeOffsetFound=true;
+    }
+
+    if (options->find(SDT_OPT_FRAMEDURATION)!=options->end())
+    {
+        // Read frame duration from options and convert into float
+        std::string frameDurationStr=(*options)[SDT_OPT_FRAMEDURATION];
+        try
+        {
+            frameDuration=stof(frameDurationStr);
+        }
+        catch (const std::exception&)
+        {
+            frameDuration=0;
+        }
+
+        frameDurationFound=true;
     }
 
 
@@ -366,20 +393,28 @@ void sdtTagWriter::calculateVariables()
         // If the current series should be in color mode
         if (boost::to_upper_copy((*options)[SDT_OPT_SERIESMODE])==SDT_OPT_SERIESMODE_TIME)
         {
+            std::string scanTimeStr=twixReader->getValue("TotalScanTimeSec");
+
+            // If not explicit time offset has been given, estimate time point
+            // based on total scan duration and number of series
             if (!timeOffsetFound)
             {
-                std::string scanTimeStr=twixReader->getValue("TotalScanTimeSec");
-
                 if (!scanTimeStr.empty())
                 {
                     frameTime=std::stod(scanTimeStr);
                     frameTime=frameTime/double(seriesCount) * (0.5 + series - 1);
                 }
 
-                // TODO: Adapt the duration tag if dynamic mode has been selected (matching the frame time)
-
                 //LOG("DBG: Total duration " << std::stod(scanTimeStr));
                 //LOG("DBG: Time series mode, total duration = " << frameTime);
+            }
+
+            if (!frameDurationFound)
+            {
+                if (!scanTimeStr.empty())
+                {
+                    frameDuration=std::stod(scanTimeStr)/double(seriesCount);
+                }
             }
         }
     }
@@ -387,7 +422,21 @@ void sdtTagWriter::calculateVariables()
     if (frameTime!=0)
     {
         // Add frametime to creation time
+
+        long frameSec=long(frameTime);
+        long frameMSec=long((frameTime-frameSec)*1000);
+
+        acquisitionTime=creationTime + seconds(frameSec) + milliseconds(frameMSec);
     }
+    else
+    {
+        acquisitionTime=creationTime;
+    }
+
+    // TODO: Adapt the duration tag if dynamic mode has been selected (matching the frame time)
+
+    // TODO: Set duration tag
+
 }
 
 
