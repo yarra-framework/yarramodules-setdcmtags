@@ -284,5 +284,17 @@ void sdtTagMapping::evaluateSeriesOptions(int series)
             addTag("0028", "1051", "256"                ); // Window Width
         }
     }
+
+    if (currentOptions.find(SDT_OPT_SERIESMODE)!=currentOptions.end())
+    {
+        // For the time series mode, append the time point number to the series description
+        if (boost::to_upper_copy(currentOptions[SDT_OPT_SERIESMODE])==SDT_OPT_SERIESMODE_TIME)
+        {
+            addTag("0054", "1000", "DYNAMIC"            ); // Series Type
+            addTag("0008", "103E", "#protname_frame"    ); // Series Description
+            addTag("0054", "0101", "#series_count"      ); // Number of Time Slices
+            addTag("0018", "1242", "#duration_frame"    ); // Actual Frame Duration
+        }
+    }
 }
 

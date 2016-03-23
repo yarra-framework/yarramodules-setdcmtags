@@ -47,6 +47,9 @@ protected:
     ptime       processingTime;
     ptime       acquisitionTime;
 
+    double      frameDuration;
+
+
     std::string inputFilename;
     std::string outputFilename;
 

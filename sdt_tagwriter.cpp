@@ -28,6 +28,8 @@ sdtTagWriter::sdtTagWriter()
     approxCreationTime=true;
     raidDateTime="";
 
+    frameDuration=0;
+
     inputFilename ="";
     outputFilename="";
     inputPath     ="";
@@ -188,6 +190,16 @@ bool sdtTagWriter::getTagValue(std::string mapping, std::string& value)
             value=std::to_string(series+seriesOffset);
         }
 
+        if (variable==SDT_VAR_SLICE_COUNT)
+        {
+            value=std::to_string(sliceCount);
+        }
+
+        if (variable==SDT_VAR_SERIES_COUNT)
+        {
+            value=std::to_string(seriesCount);
+        }
+
         if (variable==SDT_VAR_UID_SERIES)
         {
             value=seriesUID;
@@ -236,6 +248,16 @@ bool sdtTagWriter::getTagValue(std::string mapping, std::string& value)
         if (variable==SDT_VAR_ACQ_DATE)
         {
             formatDateTime("%Y%m%d", acquisitionTime, value);
+        }
+
+        if (variable==SDT_VAR_PROTNAME_FRAME)
+        {
+            value=twixReader->getValue("ProtocolName")+", T"+std::to_string(series-1);
+        }
+
+        if (variable==SDT_VAR_DURATION_FRAME)
+        {
+            value=std::to_string(int(frameDuration));
         }
 
         if (variable==SDT_VAR_KEEP)
@@ -351,7 +373,7 @@ void sdtTagWriter::calculateVariables()
     double frameTime=0;
     bool   timeOffsetFound=false;
 
-    double frameDuration=0;
+    frameDuration=0;
     bool   frameDurationFound=false;
 
     if (options->find(SDT_OPT_TIMEOFFSET)!=options->end())
@@ -413,7 +435,8 @@ void sdtTagWriter::calculateVariables()
             {
                 if (!scanTimeStr.empty())
                 {
-                    frameDuration=std::stod(scanTimeStr)/double(seriesCount);
+                    // Estimate the frame duration in ms
+                    frameDuration=std::stod(scanTimeStr)/double(seriesCount)*1000;
                 }
             }
         }
@@ -433,10 +456,7 @@ void sdtTagWriter::calculateVariables()
         acquisitionTime=creationTime;
     }
 
-    // TODO: Adapt the duration tag if dynamic mode has been selected (matching the frame time)
-
     // TODO: Set duration tag
-
 }
 
 
