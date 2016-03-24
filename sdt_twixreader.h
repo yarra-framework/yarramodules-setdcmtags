@@ -55,7 +55,9 @@ public:
 
     bool readFile(std::string filename);
     std::string getErrorReason();
+
     std::string getValue(std::string id);
+    int         getValueInt(std::string id);
 
     void setDebugOptions(bool dumpProtocol);
 
@@ -112,6 +114,19 @@ inline std::string sdtTWIXReader::getValue(std::string id)
 
     // If so, return the value
     return values[id];
+}
+
+
+inline int sdtTWIXReader::getValueInt(std::string id)
+{
+    std::string value=getValue(id);
+
+    if (value.empty())
+    {
+        return 0;
+    }
+
+    return atoi(value.c_str());
 }
 
 

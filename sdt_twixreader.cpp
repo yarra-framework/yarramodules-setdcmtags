@@ -241,7 +241,6 @@ void sdtTWIXReader::calculateAdditionalValues()
 }
 
 
-
 bool sdtTWIXReader::readMRProt(std::ifstream& file)
 {
     while ((!file.eof()) && (file.tellg()<headerEnd))

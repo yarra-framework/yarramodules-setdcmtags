@@ -30,6 +30,9 @@ sdtTagWriter::sdtTagWriter()
 
     frameDuration=0;
 
+    is3DScan=false;
+    sliceArraySize=1;
+
     inputFilename ="";
     outputFilename="";
     inputPath     ="";
@@ -102,6 +105,7 @@ void sdtTagWriter::setMapping(stringmap* currentMapping, stringmap* currentOptio
 bool sdtTagWriter::processFile()
 {
     calculateVariables();
+    calculateOrientation();
 
     tags.clear();
 
@@ -457,6 +461,17 @@ void sdtTagWriter::calculateVariables()
     }
 
     // TODO: Set duration tag
+
+    if (twixReader->getValue("MRAcquisitionType")=="3D")
+    {
+        is3DScan=true;
+    }
+    else
+    {
+        is3DScan=false;
+    }
+
+    // TODO sliceArraySize;
 }
 
 
@@ -494,4 +509,246 @@ void sdtTagWriter::prepareTime()
     acquisitionTime=creationTime;
 }
 
+
+void sdtTagWriter::calculateOrientation()
+{
+    // TODO
+
+
+}
+
+
+arma::mat sdtTagWriter::rotation_matrix(double theta, const arma::mat & rotationAxis)
+{
+    auto C = cos(theta);
+    auto S = sin(theta);
+    auto OMC = 1.0-C;
+    auto uX = rotationAxis(0);
+    auto uY = rotationAxis(1);
+    auto uZ = rotationAxis(2);
+    arma::mat R;
+    R   << C + uX*uX*OMC    << uX*uY*OMC + uZ*S << uX*uZ*OMC - uY*S << arma::endr
+    << uX*uY*OMC - uZ*S << C + uY*uY*OMC    << uY*uZ*OMC + uX*S << arma::endr
+    << uX*uZ*OMC + uY*S << uY*uZ*OMC - uX*S << C +uZ*uZ*OMC     << arma::endr;
+    return R;
+}
+
+
+/*
+// TODO
+bool TagsLookupTable::calcImageOrientation(std::ostream & log_stream)
+{
+    bool success = true;
+
+    int sliceNum = -1;
+    try
+    {
+        sliceNum = stoi(tag_variables[TagsLookupTable::variableSlice]);
+    }
+    catch (...)
+    {
+        log_stream << "Cannot read slice number as int: " << tag_variables[TagsLookupTable::variableSlice] << std::endl;
+    }
+    std::string base_path = "sSliceArray.asSlice[" + std::to_string(sliceNum) + "].";
+    std::string base_path_zero = "sSliceArray.asSlice[0].";
+
+//    % slice center
+//    sliceobj = mrprot{1}.sSliceArray.asSlice(k);
+//
+//    try center(1) = sliceobj.sPosition.dSag; catch center(1) = 0; end;
+//    try center(2) = sliceobj.sPosition.dCar; catch center(2) = 0; end;
+//    try center(3) = sliceobj.sPosition.dTra; catch center(3) = 0; end;
+//    try normal(1) = sliceobj.sNormal.dSag; catch normal(1) = 0; end;
+//    try normal(2) = sliceobj.sNormal.dCor; catch normal(2) = 0; end;
+//    try normal(3) = sliceobj.sNormal.dTra; catch normal(3) = 0; end;
+
+    arma::rowvec center(3);
+    success &= getMRprotValue({base_path + "sPosition.dSag", base_path_zero + "sPosition.dSag"}, center(0), log_stream);
+    success &= getMRprotValue({base_path + "sPosition.dCor", base_path_zero + "sPosition.dCor"}, center(1), log_stream);
+    success &= getMRprotValue({base_path + "sPosition.dTra", base_path_zero + "sPosition.dTra"}, center(2), log_stream);
+
+    arma::vec normal(3);
+    success &= getMRprotValue({base_path + "sNormal.dSag", base_path_zero + "sNormal.dSag"}, normal(0), log_stream, 0);
+    success &= getMRprotValue({base_path + "sNormal.dCor", base_path_zero + "sNormal.dCor"}, normal(1), log_stream, 0);
+    success &= getMRprotValue({base_path + "sNormal.dTra", base_path_zero + "sNormal.dTra"}, normal(2), log_stream, 0);
+
+    std::string SliceThickness;
+    success &= getMRprotValue({base_path + "dThickness", base_path_zero + "dThickness"}, SliceThickness, log_stream);
+    tag_variables["SliceThickness"] = SliceThickness;
+
+    if (tag_variables["MRAcquisitionType"] == "3D")
+    {
+        try
+        {
+            int imageNum = std::stoi(tag_variables["NoImagesPerSlab"]);
+
+            double sliceThick = std::stod(SliceThickness)/imageNum;
+            tag_variables["SliceThickness"] = std::to_string(sliceThick);
+
+            double sliceShift = sliceThick*(sliceNum-1) - sliceThick*(imageNum-1)/2 ;
+            center(2) += sliceShift;
+        }
+        catch (...)
+        {
+            log_stream << "Unable calculate sliceShift for 3D case " << std::endl;
+            return false;
+        }
+    }
+
+//        % this accounts to AP,PA, RL, LR
+//        % inplaneRot = sliceobj.dInPlaneRot; %in radians
+//        inplaneRot = 0;
+    double inplaneRot = 0;
+//
+//        rot = rotation_matrix(acos(dot([0,0,1],normal)),cross(normal,[0,0,1]));
+//        FOV = [sliceobj.dPhaseFOV,sliceobj.dReadoutFOV,0];
+    arma::vec FOV(3);
+    success &= getMRprotValue({base_path + "dPhaseFOV", base_path_zero + "dPhaseFOV"}, FOV(0), log_stream);
+    success &= getMRprotValue({base_path + "dReadoutFOV", base_path_zero + "dReadoutFOV"}, FOV(1), log_stream);
+    FOV(2) = 0;
+
+//        ImgOri = [1,0,0;0,1,0;0,0,1];
+    arma::mat ImgOri;
+    ImgOri  << 1 << 0 << 0 << arma::endr
+            << 0 << 1 << 0 << arma::endr
+            << 0 << 0 << 1 << arma::endr;
+
+//        normorig = ImgOri(:,3);
+    arma::mat normorig = ImgOri.col(2);
+
+//        n = 10000000;
+//        normal2 = round(normal*n)/n;
+    double n = 10000000;
+    arma::vec normal2 = arma::round(normal*n) / n;
+
+//        % % option: rotate around X and then around Y
+//        % rotate around X
+//        beta = acos(normal(3));
+//        beta = round(beta*180/pi)/180*pi;
+//        %beta = atan(norm(normal2(1:2))/normal2(3));
+//        Rx = [1 0 0;0 cos(beta) -sin(beta);0 sin(beta) cos(beta)];
+    double beta = acos(normal(2));
+    beta = round(beta * 180 / datum::pi) / 180 * datum::pi;
+    arma::mat Rx;
+    Rx  << 1 << 0         << 0          << arma::endr
+        << 0 << cos(beta) << -sin(beta) << arma::endr
+        << 0 << sin(beta) << cos(beta)  << arma::endr;
+
+//        % rotate around new Y
+//        alpha = -acos(dot(normal2,Rx*[0,0,1]'));
+//        %                 alpha = -round(-alpha*180/pi)/180*pi;
+//        Rz = rotation_matrix(alpha,Rx*[0,1,0]');
+
+    arma::mat m_001; m_001 << 0 << 0 << 1;
+    arma::mat m_010; m_010 << 0 << 0 << 1;
+    auto alpha = -acos(dot(normal2, Rx * m_001.t()));
+    auto Rz = rotation_matrix(alpha, Rx * m_010.t());
+
+//        %                 % % option: rotate around X and then around Z
+//        %                 % rotate around X
+//        %                 beta = acos(normal(3)/norm(normal));
+//        %                 Rx = [1 0 0;0 cos(beta) -sin(beta);0 sin(beta) cos(beta)];
+//        %
+//        %                 % rotate around z
+//        %                 if (norm(normal(1:2)) > 0)
+//        %                     alpha = -acos(normal(2)/norm(normal(1:2)))-pi;
+//        %                     Rz = [cos(alpha) -sin(alpha) 0;sin(alpha) cos(alpha) 0; 0 0 1];
+//        %                 else
+//        %                     Rz = eye(3);
+//        %                 end;
+//
+//        % % option: rotate around Y and then around Z
+//        %                 % rotate around Y
+//        %                 beta = acos(normal(3)/norm(normal));
+//        %                 Rx = [cos(beta) 0 sin(beta);0 1 0;-sin(beta) 0 cos(beta)];
+//        %
+//        %                 % rotate around z
+//                                          %                 if (norm(normal(1:2)) > 0)
+//        %                     alpha = -acos(normal(1)/norm(normal(1:2)));
+//        %                     Rz = [cos(alpha) -sin(alpha) 0;sin(alpha) cos(alpha) 0; 0 0 1];
+//        %                 else
+//        %                     Rz = eye(3);
+//        %                 end;
+//
+//        % in plane rotation
+//        C = cos(inplaneRot);
+//        S = sin(inplaneRot);
+//        OMC = 1.0-C;
+//        uX = normal(1);
+//        uY = normal(2);
+//        uZ = normal(3);
+
+    auto C = cos(inplaneRot);
+    auto S = sin(inplaneRot);
+    auto OMC = 1.0-C;
+    auto uX = normal(0);
+    auto uY = normal(1);
+    auto uZ = normal(2);
+
+//        Rip = [C+uX^2*OMC uX*uY*OMC+uZ*S uX*uZ*OMC-uY*S; ...
+//        uX*uY*OMC-uZ*S C+uY^2*OMC uY*uZ*OMC+uX*S; ...
+//        uX*uZ*OMC+uY*S uY*uZ*OMC-uX*S C+uZ^2*OMC ];
+
+    arma::mat Rip;
+    Rip << C + uX*uX*OMC    << uX*uY*OMC + uZ*S << uX*uZ*OMC - uY*S << arma::endr
+        << uX*uY*OMC - uZ*S << C + uY*uY*OMC    << uY*uZ*OMC + uX*S << arma::endr
+        << uX*uZ*OMC + uY*S << uY*uZ*OMC - uX*S << C + uZ*uZ*OMC    << arma::endr;
+
+//        ImgDir = (Rip*Rz*Rx*ImgOri')';
+//        ImgPos = center - ImgDir(1,:)*FOV(1)/2 - ImgDir(2,:)*FOV(2)/2;
+    arma::mat ImgDir = (Rip * Rz * Rx * ImgOri.t()).t();
+    arma::mat ImgPos = center - ImgDir.row(0) * FOV(0)/2 - ImgDir.row(1) * FOV(1)/2;
+
+//        %                 % test calculations
+//        %                 if (l == 1)
+//        %                     v1 = hdrdcmtmp.ImageOrientationPatient(1:3);
+//        %                     v2 = hdrdcmtmp.ImageOrientationPatient(4:6);
+//        %                     diffangles = acos([dot(v1,ImgDir(1,:)),dot(v2,ImgDir(2,:)),dot(normal,ImgDir(3,:))])*180/pi;
+//        %                     if (max(diffangles) > 0.1)
+//        %                         display('Discrepancy in ImageOrientationPatient!')
+//        %                         diffangles
+//        %                     end;
+//        %                     if (max(abs(hdrdcmtmp.ImagePositionPatient'-ImgPos)) > 0.1)
+//        %                         display('Discrepancy in ImagePositionPatient!')
+//        %                         hdrdcmtmp.ImagePositionPatient'
+//        %                     end;
+//        %                     % make a figure
+//        %                     b = normal;
+//        %                     figure;axis equal;hold on;plot3([0,b(1)],[0,b(2)],[0,b(3)],'o-k');
+//        %                     for ii = 1:3
+//        %                         plot3([0,ImgDir(ii,1)],[0,ImgDir(ii,2)],[0,ImgDir(ii,3)],'o-r');
+//        %                         plot3([0,ImgOri(ii,1)],[0,ImgOri(ii,2)],[0,ImgOri(ii,3)],'o-b');
+//        %                     end;
+//        %                     plot3([0,v1(1)],[0,v1(2)],[0,v1(3)],'o-k');
+//        %                     plot3([0,v2(1)],[0,v2(2)],[0,v2(3)],'o-k');
+//        %                 end;
+//
+//        headers{i,j,k}.EchoNumber = j;
+
+//        headers{i,j,k}.ImagePositionPatient = ImgPos';
+    std::stringstream ImagePositionPatient;
+
+    //-129.340954421\-132\-49.99485386
+    ImagePositionPatient << std::fixed << ImgPos(0) << "\\" << ImgPos(1) << "\\" << ImgPos(2);
+    tag_variables["ImagePositionPatient"] = ImagePositionPatient.str();
+
+//        headers{i,j,k}.ImageOrientationPatient = [ImgDir(1,:)';ImgDir(2,:)'];
+    std::stringstream ImageOrientationPatient;
+    ImageOrientationPatient
+            << int(round(ImgDir(0 , 0))) << "\\" << int(round(ImgDir(0 , 1))) << "\\" << int(round(ImgDir(0 , 2))) << "\\"
+            << int(round(ImgDir(1 , 0))) << "\\" << int(round(ImgDir(1 , 1))) << "\\" << int(round(ImgDir(1 , 2)));
+    tag_variables["ImageOrientationPatient"] = ImageOrientationPatient.str();
+//    arma::mat(join_vert(ImgDir.row(0).t(), ImgDir.row(1).t())).save(ImageOrientationPatient, arma::raw_ascii);
+
+
+//        headers{i,j,k}.Private_0019_1015 = headers{i,j,k}.ImagePositionPatient;
+//        headers{i,j,k}.SliceLocation = center(3);%headers{i,j,k}.ImagePositionPatient(3);
+    tag_variables["SliceLocation"] = std::to_string(center(2));
+
+//        headers{i,j,k}.InstanceNumber = l;l = l+1;
+//        headers{i,j,k}.AcquisitionNumber = i;
+
+    return success;
+}
+*/
 

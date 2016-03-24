@@ -5,9 +5,9 @@
 #include <iostream>
 #include <map>
 #include "boost/date_time/posix_time/posix_time.hpp"
+#include <armadillo>
 
 #include "sdt_global.h"
-
 
 using namespace boost::posix_time;
 
@@ -38,7 +38,10 @@ protected:
     std::string studyUID;
     std::string accessionNumber;
     int         sliceCount;
-    int         seriesCount;
+    int         seriesCount;    
+
+    bool        is3DScan;
+    int         sliceArraySize;
 
     bool        approxCreationTime;
     std::string raidDateTime;
@@ -65,13 +68,18 @@ protected:
 
     bool getTagValue(std::string mapping, std::string& value);
     bool writeFile();
+
     void calculateVariables();
+    void calculateOrientation();
 
     int seriesOffset;
 
     std::string eval_DIV(std::string value, std::string arg);
 
     void formatDateTime(std::string const& format, ptime const& date_time, std::string& result);
+
+    arma::mat rotation_matrix(double theta, const arma::mat & rotationAxis);
+
 };
 
 

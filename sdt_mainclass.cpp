@@ -236,7 +236,7 @@ bool sdtMainclass::processSeries()
     for (auto series : seriesMap)
     {
         int seriesID=series.first;
-        tagMapping.setupSeriesConfiguration(seriesID);
+        tagMapping.setupSeriesConfiguration(seriesID);        
 
         // Loop over all slices of series
         for (auto& slice : series.second.sliceMap)
