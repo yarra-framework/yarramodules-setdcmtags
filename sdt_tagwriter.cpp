@@ -471,7 +471,16 @@ void sdtTagWriter::calculateVariables()
         is3DScan=false;
     }
 
-    // TODO sliceArraySize;
+    sliceArraySize=1;
+    if (!twixReader->getValue("mrprot.sSliceArray.lSize").empty())
+    {
+        sliceArraySize=twixReader->getValueInt("mrprot.sSliceArray.lSize");
+
+        if (sliceArraySize==0)
+        {
+            sliceArraySize=1;
+        }
+    }
 }
 
 
