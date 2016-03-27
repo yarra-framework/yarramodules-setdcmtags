@@ -39,8 +39,7 @@ void sdtTagMapping::setupDefaultMapping()
     addTag("0008", "103E", "@ProtocolName"              ); // Series Description
 
     addTag("0018", "1020", "@SoftwareVersions"          ); // Software Versions
-
-    addTag("0018", "1016", "Yarra Framework"             ); // Secondary Capture Device Manufacturer
+    addTag("0018", "1016", "Yarra Framework"            ); // Secondary Capture Device Manufacturer
 
     std::string setDCMTagInfo=std::string("SetDCMTags Ver ")+SDT_VERSION;
     addTag("0018", "1018", setDCMTagInfo                ); // Secondary Capture Device Manufacturer's Model Name
@@ -74,7 +73,6 @@ void sdtTagMapping::setupDefaultMapping()
     addTag("0028", "0103", "0"                          ); // Pixel Representation
 
     addTag("0008", "0008", "ORIGINAL\\PRIMARY"          ); // Image Type
-
     addTag("0019", "0010", "SIEMENS MR HEADER"          ); // Siemens Private Tag
     addTag("0051", "0010", "SIEMENS MR HEADER"          ); // Siemens Private Tag
     addTag("0019", "1008", "IMAGE NUM 4"                ); // Siemens Private Tag
@@ -86,21 +84,22 @@ void sdtTagMapping::setupDefaultMapping()
 
     addTag("0008", "0020", "#create_date"               ); // Study Date
     addTag("0008", "0030", "#create_time"               ); // Study Time
-
     addTag("0008", "0021", "#acq_date"                  ); // Series Date
     addTag("0008", "0031", "#acq_time"                  ); // Series Time
-
     addTag("0008", "0022", "#acq_date"                  ); // Acquisition Date
     addTag("0008", "0032", "#acq_time"                  ); // Acquisition Time
-
     addTag("0008", "0023", "#proc_date"                 ); // Content/Image Date
     addTag("0008", "0033", "#proc_time"                 ); // Content/Image Time
-
     addTag("0008", "0012", "#proc_date"                 ); // Instance Creation Date
     addTag("0008", "0013", "#proc_time"                 ); // Instance Creation Time
 
-    // TODO: Set slice orientation / location: DCM_ImagePositionPatient, DCM_ImageOrientationPatient, DCM_SliceThickness, DCM_PixelSpacing, DCM_SliceLocation, DCM_PositionReferenceIndicator
-    // TODO: Time series information: DCM_SeriesType, DCM_NumberOfTimeSlices, DCM_ActualFrameDuration
+    addTag("0018", "5100", "@PatientPosition"           ); // Patient Position
+
+    // ImagePositionPatient
+    // ImageOrientationPatient
+    // SliceLocation
+
+    // TODO: Set slice orientation / location: DCM_ImagePositionPatient, DCM_ImageOrientationPatient, DCM_SliceLocation, DCM_SliceThickness, DCM_PixelSpacing, DCM_PositionReferenceIndicator
 }
 
 
