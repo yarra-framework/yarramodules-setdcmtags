@@ -522,6 +522,13 @@ void sdtTagWriter::prepareTime()
 void sdtTagWriter::calculateOrientation()
 {
     // TODO
+    int sliceToUse=0;
+
+    std::string pathBase="mrprot.sSliceArray.asSlice["+std::to_string(sliceToUse)+"].";
+
+    arma::rowvec center(3);
+    arma::vec    normal(3);
+
 
 
 }
