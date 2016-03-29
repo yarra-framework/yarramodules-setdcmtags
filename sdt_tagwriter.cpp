@@ -528,9 +528,22 @@ void sdtTagWriter::calculateOrientation()
 
     arma::rowvec center(3);
     arma::vec    normal(3);
+    arma::vec    fov(3);
 
+    center(0)=twixReader->getValueDouble(pathBase+"sPosition.dSag");
+    center(1)=twixReader->getValueDouble(pathBase+"sPosition.dCor");
+    center(2)=twixReader->getValueDouble(pathBase+"sPosition.dTra");
 
+    normal(0)=twixReader->getValueDouble(pathBase+"sNormal.dSag");
+    normal(1)=twixReader->getValueDouble(pathBase+"sNormal.dCor");
+    normal(2)=twixReader->getValueDouble(pathBase+"sNormal.dTra");
 
+    fov(0)=twixReader->getValueDouble(pathBase+"dPhaseFOV"  );
+    fov(1)=twixReader->getValueDouble(pathBase+"dReadoutFOV");
+    fov(2)=0;
+
+    double thickness =twixReader->getValueDouble(pathBase+"dThickness" );
+    double inplaneRot=twixReader->getValueDouble(pathBase+"dInPlaneRot");
 }
 
 
