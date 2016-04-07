@@ -42,14 +42,24 @@ HEADERS += \
 DEFINES += HAVE_CONFIG_H
 DEFINES += USE_NULL_SAFE_OFSTRING
 
+QMAKE_CXXFLAGS += -DARMA_DONT_USE_WRAPPER
+
 INCLUDEPATH += /usr/local/include/dcmtk/dcmnet/
 INCLUDEPATH += /usr/local/include/dcmtk/config/
 
-LIBS =  -ldcmdata -loflog -lofstd -lz -lpthread -lrt
+#LIBS =  -ldcmdata -loflog -lofstd -lz -lpthread -lrt
+LIBS =  -lpthread -lrt
 
+LIBS += /usr/lib/libdcmdata.a
+LIBS += /usr/lib/liboflog.a
+LIBS += /usr/lib/libofstd.a
+LIBS += -lz
+LIBS += /usr/lib/libblas.a
 LIBS += $$BOOST_PATH/libboost_filesystem.a
 LIBS += $$BOOST_PATH/libboost_system.a
 LIBS += $$BOOST_PATH/libboost_date_time.a
+
+#LIBS += $$BOOST_PATH/libarmadillo.a
 
 #LIBS += -loflog -pthread -lofstd -ldcmdata -ldcmnet
 #LIBS += -lrt -lnsl -lm -lz

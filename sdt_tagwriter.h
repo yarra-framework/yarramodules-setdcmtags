@@ -52,6 +52,10 @@ protected:
 
     double      frameDuration;
 
+    std::string imagePositionPatient;
+    std::string imageOrientationPatient;
+    std::string sliceLocation;
+
 
     std::string inputFilename;
     std::string outputFilename;

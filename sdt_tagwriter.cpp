@@ -15,6 +15,11 @@
 #include "boost/date_time/posix_time/posix_time.hpp"
 
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
+
 sdtTagWriter::sdtTagWriter()
 {
     slice      =0;
@@ -544,6 +549,55 @@ void sdtTagWriter::calculateOrientation()
 
     double thickness =twixReader->getValueDouble(pathBase+"dThickness" );
     double inplaneRot=twixReader->getValueDouble(pathBase+"dInPlaneRot");
+
+    arma::mat ImgOri;
+    ImgOri  << 1 << 0 << 0 << arma::endr
+            << 0 << 1 << 0 << arma::endr
+            << 0 << 0 << 1 << arma::endr;
+
+    //arma::mat normorig = ImgOri.col(2);
+
+    double n = 10000000;
+    arma::vec normal2 = arma::round(normal*n) / n;
+
+    double beta = acos(normal(2));
+    beta = round(beta * 180 / M_PI) / 180 * M_PI;
+    arma::mat Rx;
+    Rx << 1 << 0         << 0          << arma::endr
+       << 0 << cos(beta) << -sin(beta) << arma::endr
+       << 0 << sin(beta) << cos(beta)  << arma::endr;
+
+    arma::mat m_001; m_001 << 0 << 0 << 1;
+    arma::mat m_010; m_010 << 0 << 0 << 1;
+    auto alpha = -acos(dot(normal2, Rx * m_001.t()));
+    auto Rz = rotation_matrix(alpha, Rx * m_010.t());
+
+    auto C = cos(inplaneRot);
+    auto S = sin(inplaneRot);
+    auto OMC = 1.0-C;
+    auto uX = normal(0);
+    auto uY = normal(1);
+    auto uZ = normal(2);
+
+    arma::mat Rip;
+    Rip << C + uX*uX*OMC    << uX*uY*OMC + uZ*S << uX*uZ*OMC - uY*S << arma::endr
+        << uX*uY*OMC - uZ*S << C + uY*uY*OMC    << uY*uZ*OMC + uX*S << arma::endr
+        << uX*uZ*OMC + uY*S << uY*uZ*OMC - uX*S << C + uZ*uZ*OMC    << arma::endr;
+
+    arma::mat ImgDir = (Rip * Rz * Rx * ImgOri.t()).t();
+    arma::mat ImgPos = center - ImgDir.row(0) * fov(0)/2 - ImgDir.row(1) * fov(1)/2;
+
+    std::stringstream ImagePositionPatient;
+    ImagePositionPatient << std::fixed << ImgPos(0) << "\\" << ImgPos(1) << "\\" << ImgPos(2);
+    imagePositionPatient=ImagePositionPatient.str();
+
+    std::stringstream ImageOrientationPatient;
+    ImageOrientationPatient
+            << int(round(ImgDir(0 , 0))) << "\\" << int(round(ImgDir(0 , 1))) << "\\" << int(round(ImgDir(0 , 2))) << "\\"
+            << int(round(ImgDir(1 , 0))) << "\\" << int(round(ImgDir(1 , 1))) << "\\" << int(round(ImgDir(1 , 2)));
+    imageOrientationPatient=ImageOrientationPatient.str();
+
+    sliceLocation=std::to_string(center(2));
 }
 
 
