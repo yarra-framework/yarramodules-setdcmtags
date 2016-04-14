@@ -50,6 +50,13 @@ sdtTagWriter::sdtTagWriter()
     tags.clear();
 
     seriesOffset=0;
+
+    imagePositionPatient   ="";
+    imageOrientationPatient="";
+    sliceLocation          ="";
+    sliceThickness         ="";
+    pixelSpacing           ="";
+    slicesSpacing          ="";
 }
 
 
@@ -267,6 +274,36 @@ bool sdtTagWriter::getTagValue(std::string mapping, std::string& value)
         if (variable==SDT_VAR_DURATION_FRAME)
         {
             value=std::to_string(int(frameDuration));
+        }
+
+        if (variable==SDT_VAR_IMAGE_POSITION)
+        {
+            value=imagePositionPatient;
+        }
+
+        if (variable==SDT_VAR_IMAGE_ORIENTATION)
+        {
+            value=imageOrientationPatient;
+        }
+
+        if (variable==SDT_VAR_SLICE_LOCATION)
+        {
+            value=sliceLocation;
+        }
+
+        if (variable==SDT_VAR_SLICE_THICKNESS)
+        {
+            value=sliceThickness;
+        }
+
+        if (variable==SDT_VAR_PIXEL_SPACING)
+        {
+            value=pixelSpacing;
+        }
+
+        if (variable==SDT_VAR_SLICES_SPACING)
+        {
+            value=slicesSpacing;
         }
 
         if (variable==SDT_VAR_KEEP)
@@ -550,6 +587,17 @@ void sdtTagWriter::calculateOrientation()
     double thickness =twixReader->getValueDouble(pathBase+"dThickness" );
     double inplaneRot=twixReader->getValueDouble(pathBase+"dInPlaneRot");
 
+    if (is3DScan)
+    {
+        double sliceThick=thickness/sliceCount;
+        double sliceShift = sliceThick*(slice-1)-sliceThick*(sliceCount-1)/2 ;
+        center(2) += sliceShift;
+    }
+    else
+    {
+        // TODO
+    }
+
     arma::mat ImgOri;
     ImgOri  << 1 << 0 << 0 << arma::endr
             << 0 << 1 << 0 << arma::endr
@@ -687,7 +735,7 @@ bool TagsLookupTable::calcImageOrientation(std::ostream & log_stream)
 //        FOV = [sliceobj.dPhaseFOV,sliceobj.dReadoutFOV,0];
     arma::vec FOV(3);
     success &= getMRprotValue({base_path + "dPhaseFOV", base_path_zero + "dPhaseFOV"}, FOV(0), log_stream);
-    success &= getMRprotValue({base_path + "dReadoutFOV", base_path_zero + "dReadoutFOV"}, FOV(1), log_stream);
+    success &= getMRprotValue({base_path + "dReadoutFOV", base_path_zero + "dReadoutFOpathBaseV"}, FOV(1), log_stream);
     FOV(2) = 0;
 
 //        ImgOri = [1,0,0;0,1,0;0,0,1];

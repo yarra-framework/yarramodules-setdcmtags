@@ -545,5 +545,5 @@ void sdtTWIXReader::prepareSearchList()
     addSearchEntry("ScanTimeSec",                "<ParamLong.\"lScanTimeSec\">"             , tLONG  );
     addSearchEntry("TotalScanTimeSec",           "<ParamLong.\"lTotalScanTimeSec\">"        , tLONG  );
 
+    addSearchEntry("TablePosition",              "<ParamLong.\"SBCSOriginPositionZ\">"      , tLONG  );
 }
-

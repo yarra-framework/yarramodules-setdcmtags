@@ -55,7 +55,9 @@ protected:
     std::string imagePositionPatient;
     std::string imageOrientationPatient;
     std::string sliceLocation;
-
+    std::string sliceThickness;
+    std::string pixelSpacing;
+    std::string slicesSpacing;
 
     std::string inputFilename;
     std::string outputFilename;

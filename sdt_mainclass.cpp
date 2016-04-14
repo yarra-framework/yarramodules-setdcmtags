@@ -80,6 +80,8 @@ void sdtMainclass::perform(int argc, char *argv[])
 
         LOG("Yarra SetDCMTags -- Version " << SDT_VERSION);
         LOG("");
+        LOG("WARNING: This module is still in development and might not be completely functional yet.");
+        LOG("");
 
         // ## First get the mandatory parameters
         cmdLine.getParam(1, inputDir );

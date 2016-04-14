@@ -18,88 +18,94 @@ sdtTagMapping::sdtTagMapping()
 
 void sdtTagMapping::setupDefaultMapping()
 {
-    addTag("0010", "0010", "@PatientName"               ); // Patient's Name
-    addTag("0010", "0020", "@PatientID"                 ); // Patient ID
-    addTag("0010", "0030", "@PatientBirthDay"           ); // Patient's Birth Date
-    addTag("0010", "1010", "@PatientAge_DCM"            ); // Patient's Age
-    addTag("0010", "0040", "@PatientSex_DCM"            ); // Patient's Sex
+    addTag("0010", "0010", "@PatientName"                ); // Patient's Name
+    addTag("0010", "0020", "@PatientID"                  ); // Patient ID
+    addTag("0010", "0030", "@PatientBirthDay"            ); // Patient's Birth Date
+    addTag("0010", "1010", "@PatientAge_DCM"             ); // Patient's Age
+    addTag("0010", "0040", "@PatientSex_DCM"             ); // Patient's Sex
 
-    addTag("0018", "0010", "@BolusAgent"                ); // Contrast/Bolus Agent
-    addTag("0018", "1041", "@ContrastBolusVolume"       ); // Contrast/Bolus Volume
+    addTag("0018", "0010", "@BolusAgent"                 ); // Contrast/Bolus Agent
+    addTag("0018", "1041", "@ContrastBolusVolume"        ); // Contrast/Bolus Volume
 
-    addTag("0018", "0020", "@ScanningSequence"          ); // Scanning Sequence
-    addTag("0018", "0021", "@SequenceVariant"           ); // Sequence Variant
-    addTag("0018", "0022", "@ScanOptions"               ); // Scan Options
-    addTag("0018", "0023", "@MRAcquisitionType"         ); // MR Acquisition Type
-    addTag("0018", "0024", "@SequenceString"            ); // Sequence Name
+    addTag("0018", "0020", "@ScanningSequence"           ); // Scanning Sequence
+    addTag("0018", "0021", "@SequenceVariant"            ); // Sequence Variant
+    addTag("0018", "0022", "@ScanOptions"                ); // Scan Options
+    addTag("0018", "0023", "@MRAcquisitionType"          ); // MR Acquisition Type
+    addTag("0018", "0024", "@SequenceString"             ); // Sequence Name
 
-    addTag("0018", "0087", "@MagneticFieldStrength"     ); // Magnetic Field Strength
-    addTag("0018", "0100", "@DeviceSerialNumber"        ); // Device Serial Number
-    addTag("0018", "1030", "@ProtocolName"              ); // Protocol Name
-    addTag("0008", "103E", "@ProtocolName"              ); // Series Description
+    addTag("0018", "0087", "@MagneticFieldStrength"      ); // Magnetic Field Strength
+    addTag("0018", "0100", "@DeviceSerialNumber"         ); // Device Serial Number
+    addTag("0018", "1030", "@ProtocolName"               ); // Protocol Name
+    addTag("0008", "103E", "@ProtocolName"               ); // Series Description
 
-    addTag("0018", "1020", "@SoftwareVersions"          ); // Software Versions
-    addTag("0018", "1016", "Yarra Framework"            ); // Secondary Capture Device Manufacturer
+    addTag("0018", "1020", "@SoftwareVersions"           ); // Software Versions
+    addTag("0018", "1016", "Yarra Framework"             ); // Secondary Capture Device Manufacturer
 
     std::string setDCMTagInfo=std::string("SetDCMTags Ver ")+SDT_VERSION;
-    addTag("0018", "1018", setDCMTagInfo                ); // Secondary Capture Device Manufacturer's Model Name
+    addTag("0018", "1018", setDCMTagInfo                 ); // Secondary Capture Device Manufacturer's Model Name
 
-    addTag("0008", "0060", "@Modality"                  ); // Modality
-    addTag("0008", "0070", "@Manufacturer"              ); // Manufacturer
-    addTag("0008", "1090", "@ManufacturersModelName"    ); // Manufacturer's Model Name
-    addTag("0008", "0080", "@InstitutionName"           ); // Institution Name
-    addTag("0008", "0081", "@InstitutionAddress"        ); // Institution Address
-    addTag("0008", "1010", "@StationName"               ); // Station Name
+    addTag("0008", "0060", "@Modality"                   ); // Modality
+    addTag("0008", "0070", "@Manufacturer"               ); // Manufacturer
+    addTag("0008", "1090", "@ManufacturersModelName"     ); // Manufacturer's Model Name
+    addTag("0008", "0080", "@InstitutionName"            ); // Institution Name
+    addTag("0008", "0081", "@InstitutionAddress"         ); // Institution Address
+    addTag("0008", "1010", "@StationName"                ); // Station Name
 
-    addTag("0008", "0050", "#acc"                       ); // Accession Number
-    addTag("0020", "0010", "#uid_study"                 ); // Study ID
-    addTag("0020", "0052", "#uid_study"                 ); // Frame of Reference UID
-    addTag("0020", "000D", "#uid_study"                 ); // Study Instance UID
-    addTag("0020", "000E", "#uid_series"                ); // Series Instance UID
-    addTag("0020", "0011", "#series"                    ); // Series Number
-    addTag("0020", "0013", "#slice"                     ); // Instance Number
-    addTag("0020", "0012", "1"                          ); // Acquisition Number
+    addTag("0008", "0050", "#acc"                        ); // Accession Number
+    addTag("0020", "0010", "#uid_study"                  ); // Study ID
+    addTag("0020", "0052", "#uid_study"                  ); // Frame of Reference UID
+    addTag("0020", "000D", "#uid_study"                  ); // Study Instance UID
+    addTag("0020", "000E", "#uid_series"                 ); // Series Instance UID
+    addTag("0020", "0011", "#series"                     ); // Series Number
+    addTag("0020", "0013", "#slice"                      ); // Instance Number
+    addTag("0020", "0012", "1"                           ); // Acquisition Number
 
-    addTag("0028", "0004", "MONOCHROME2"                ); // Photometric Interpretation
-    addTag("0008", "0005", "ISO_IR 100"                 ); // Specific Character Set
+    addTag("0028", "0004", "MONOCHROME2"                 ); // Photometric Interpretation
+    addTag("0008", "0005", "ISO_IR 100"                  ); // Specific Character Set
 
-    addTag("0018", "0084", "$DIV(Frequency,1000000)"    ); // Imaging Frequency
+    addTag("0018", "0084", "$DIV(Frequency,1000000)"     ); // Imaging Frequency
 
-    addTag("0018", "0080", "$DIV(mrprot.alTR[0],1000,0)"); // Repetition Time
-    addTag("0018", "0081", "$DIV(mrprot.alTE[0],1000,2)"); // Echo Time
+    addTag("0018", "0080", "$DIV(mrprot.alTR[0],1000,0)" ); // Repetition Time
+    addTag("0018", "0081", "$DIV(mrprot.alTE[0],1000,2)" ); // Echo Time
+    addTag("0018", "1314", "@mrprot.adFlipAngleDegree[0]"); // Flip Angle
 
-    addTag("0028", "0002", "1"                          ); // Samples per Pixel
-    addTag("0028", "0100", "16"                         ); // Bits Allocated
-    addTag("0028", "0103", "0"                          ); // Pixel Representation
+    addTag("0028", "0002", "1"                           ); // Samples per Pixel
+    addTag("0028", "0100", "16"                          ); // Bits Allocated
+    addTag("0028", "0103", "0"                           ); // Pixel Representation
 
-    addTag("0008", "0008", "ORIGINAL\\PRIMARY"          ); // Image Type
-    addTag("0019", "0010", "SIEMENS MR HEADER"          ); // Siemens Private Tag
-    addTag("0051", "0010", "SIEMENS MR HEADER"          ); // Siemens Private Tag
-    addTag("0019", "1008", "IMAGE NUM 4"                ); // Siemens Private Tag
-    addTag("0029", "1008", "IMAGE NUM 4"                ); // Siemens Private Tag
-    addTag("0051", "1008", "IMAGE NUM 4"                ); // Siemens Private Tag
-    addTag("0029", "0010", "SIEMENS CSA HEADER"         ); // Siemens Private Tag
-    addTag("0029", "0011", "SIEMENS MEDCOM HEADER2"     ); // Siemens Private Tag
-    addTag("0029", "1018", "MR"                         ); // Siemens Private Tag
+    addTag("0008", "0008", "ORIGINAL\\PRIMARY"           ); // Image Type
+    addTag("0019", "0010", "SIEMENS MR HEADER"           ); // Siemens Private Tag
+    addTag("0051", "0010", "SIEMENS MR HEADER"           ); // Siemens Private Tag
+    addTag("0019", "1008", "IMAGE NUM 4"                 ); // Siemens Private Tag
+    addTag("0029", "1008", "IMAGE NUM 4"                 ); // Siemens Private Tag
+    addTag("0051", "1008", "IMAGE NUM 4"                 ); // Siemens Private Tag
+    addTag("0029", "0010", "SIEMENS CSA HEADER"          ); // Siemens Private Tag
+    addTag("0029", "0011", "SIEMENS MEDCOM HEADER2"      ); // Siemens Private Tag
+    addTag("0029", "1018", "MR"                          ); // Siemens Private Tag
 
-    addTag("0008", "0020", "#create_date"               ); // Study Date
-    addTag("0008", "0030", "#create_time"               ); // Study Time
-    addTag("0008", "0021", "#acq_date"                  ); // Series Date
-    addTag("0008", "0031", "#acq_time"                  ); // Series Time
-    addTag("0008", "0022", "#acq_date"                  ); // Acquisition Date
-    addTag("0008", "0032", "#acq_time"                  ); // Acquisition Time
-    addTag("0008", "0023", "#proc_date"                 ); // Content/Image Date
-    addTag("0008", "0033", "#proc_time"                 ); // Content/Image Time
-    addTag("0008", "0012", "#proc_date"                 ); // Instance Creation Date
-    addTag("0008", "0013", "#proc_time"                 ); // Instance Creation Time
+    addTag("0008", "0020", "#create_date"                ); // Study Date
+    addTag("0008", "0030", "#create_time"                ); // Study Time
+    addTag("0008", "0021", "#acq_date"                   ); // Series Date
+    addTag("0008", "0031", "#acq_time"                   ); // Series Time
+    addTag("0008", "0022", "#acq_date"                   ); // Acquisition Date
+    addTag("0008", "0032", "#acq_time"                   ); // Acquisition Time
+    addTag("0008", "0023", "#proc_date"                  ); // Content/Image Date
+    addTag("0008", "0033", "#proc_time"                  ); // Content/Image Time
+    addTag("0008", "0012", "#proc_date"                  ); // Instance Creation Date
+    addTag("0008", "0013", "#proc_time"                  ); // Instance Creation Time
 
-    addTag("0018", "5100", "@PatientPosition"           ); // Patient Position
+    addTag("0018", "5100", "@PatientPosition"            ); // Patient Position
+    addTag("0020", "0032", "#image_position_patient"     ); // Image Position Patient
+    addTag("0020", "0037", "#image_orientation_patient"  ); // Image Orientation Patient
+    addTag("0020", "1041", "#slice_location"             ); // Slice Location
+    addTag("0018", "0050", "#slice_thickness"            ); // Slice Thickness
+    addTag("0028", "0030", "#pixel_spacing"              ); // Pixel Spacing
+    addTag("0018", "0088", "#slices_spacing"             ); // Spacing Between Slices
 
-    // ImagePositionPatient
-    // ImageOrientationPatient
-    // SliceLocation
+    // TODO:
+    //addTag("0018", "1312", ""             ); // In-plane Phase Encoding Direction
 
-    // TODO: Set slice orientation / location: DCM_ImagePositionPatient, DCM_ImageOrientationPatient, DCM_SliceLocation, DCM_SliceThickness, DCM_PixelSpacing, DCM_PositionReferenceIndicator
+    // TODO: Set slice orientation: DCM_PositionReferenceIndicator
 }
 
 
