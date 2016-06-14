@@ -132,7 +132,8 @@ bool sdtTWIXReader::readFile(std::string filename)
         parseXProtLine(line, file);
 
         // When the MRProt section is reached, parse it and terminate
-        if (line.find("### ASCCONV BEGIN ")!=std::string::npos)
+        if ((line.find("### ASCCONV BEGIN ###")!=std::string::npos) ||
+            (line.find("### ASCCONV BEGIN object=MrProtDataImpl")!=std::string::npos))
         {
             readMRProt(file);
             terminateParsing=true;
