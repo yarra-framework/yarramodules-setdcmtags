@@ -381,6 +381,8 @@ bool sdtMainclass::parseFilename(std::string filename, seriesmode& mode, int& se
 
     std::string tmpSlice=filename;
 
+    struct isnotdigit { bool operator()(char c) { return !isdigit(c); } };
+
     if (mode==MULTI_SERIES)
     {
         std::string tmpSeries=filename;
@@ -390,12 +392,12 @@ bool sdtMainclass::parseFilename(std::string filename, seriesmode& mode, int& se
         tmpSlice.erase(0,dotPos+1);
 
         // Remove all characters and keep only numbers
-        tmpSeries.erase(std::remove_if(tmpSeries.begin(),tmpSeries.end(),isalpha),tmpSeries.end());
+        tmpSeries.erase(std::remove_if(tmpSeries.begin(),tmpSeries.end(),isnotdigit()),tmpSeries.end());
         series=atoi(tmpSeries.c_str());
     }
 
     // Remove all characters and keep only numbers
-    tmpSlice.erase(std::remove_if(tmpSlice.begin(),tmpSlice.end(),isalpha),tmpSlice.end());
+    tmpSlice.erase(std::remove_if(tmpSlice.begin(),tmpSlice.end(),isnotdigit()),tmpSlice.end());
     slice=atoi(tmpSlice.c_str());
 
     return true;
