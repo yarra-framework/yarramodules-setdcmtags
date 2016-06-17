@@ -5,7 +5,7 @@
 #include <map>
 #include <vector>
 
-#define SDT_VERSION "0.1b3"
+#define SDT_VERSION "0.1b4"
 
 #define SDT_TAG_RAW '@'
 #define SDT_TAG_VAR '#'

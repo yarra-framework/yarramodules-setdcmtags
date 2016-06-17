@@ -72,7 +72,7 @@ protected:
 
     sdtTWIXReader* twixReader;
 
-    bool getTagValue(std::string mapping, std::string& value);
+    bool getTagValue(std::string mapping, std::string& value, int recurCount=0);
     bool writeFile();
 
     void calculateVariables();

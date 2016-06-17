@@ -188,7 +188,7 @@ bool sdtTagWriter::writeFile()
 }
 
 
-bool sdtTagWriter::getTagValue(std::string mapping, std::string& value)
+bool sdtTagWriter::getTagValue(std::string mapping, std::string& value, int recurCount)
 {
     // If mapped entry is variable
     if (mapping[0]==SDT_TAG_VAR)
@@ -326,17 +326,35 @@ bool sdtTagWriter::getTagValue(std::string mapping, std::string& value)
     // If mapped entry is a conversion of a rawfile entry
     if (mapping[0]==SDT_TAG_CNV)
     {
-        size_t sepPos=mapping.find(",");
-
-        std::string rawfileKey=mapping.substr(5,sepPos-5);
-        std::string arg=mapping.substr(sepPos+1,mapping.length()-2-sepPos);
-        std::string func=mapping.substr(1,3);
-
-        value=twixReader->getValue(rawfileKey);
-
-        if (func=="DIV")
+        // Avoid multi-level nested recursion in macros
+        if (recurCount>1)
         {
-            value=eval_DIV(value, arg);
+            value="";
+        }
+        else
+        {
+            size_t sepPos=mapping.find(",");
+
+            std::string rawfileKey=mapping.substr(5,sepPos-5);
+            std::string arg=mapping.substr(sepPos+1,mapping.length()-2-sepPos);
+            std::string func=mapping.substr(1,3);
+
+            // Send the first argument to the parser again
+            value="";
+            getTagValue(rawfileKey, value, recurCount+1);
+
+            if (func=="DIV")
+            {
+                value=eval_DIV(value, arg);
+            }
+
+            if (func=="EXT")
+            {
+                // Also parse the argument value
+                std::string argValue="";
+                getTagValue(arg, argValue, recurCount+1);
+                value=value+argValue;
+            }
         }
 
         return true;
