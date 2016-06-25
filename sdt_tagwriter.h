@@ -40,6 +40,9 @@ protected:
     int         sliceCount;
     int         seriesCount;    
 
+    long        dcmRows;
+    long        dcmCols;
+
     bool        is3DScan;
     int         sliceArraySize;
 
@@ -73,7 +76,6 @@ protected:
     sdtTWIXReader* twixReader;
 
     bool getTagValue(std::string mapping, std::string& value, int recurCount=0);
-    bool writeFile();
 
     void calculateVariables();
     void calculateOrientation();

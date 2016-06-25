@@ -34,6 +34,8 @@ sdtTagWriter::sdtTagWriter()
     raidDateTime="";
 
     frameDuration=0;
+    dcmRows=0;
+    dcmCols=0;
 
     is3DScan=false;
     sliceArraySize=1;
@@ -94,6 +96,9 @@ void sdtTagWriter::setFile(std::string filename, int currentSlice, int totalSlic
     studyUID   =currentStudyUID;
     sliceCount =totalSlices;
     seriesCount=totalSeries;
+
+    dcmRows=0;
+    dcmCols=0;
 }
 
 
@@ -116,11 +121,28 @@ void sdtTagWriter::setMapping(stringmap* currentMapping, stringmap* currentOptio
 
 bool sdtTagWriter::processFile()
 {
+    OFCondition result=EC_Normal;
+    MdfDatasetManager ds_man;
+
+    // Load file into dataset manager
+    result=ds_man.loadFile(inputFilename.c_str());
+
+    if (result.bad())
+    {
+        LOG("ERROR: Unable to load file " << inputFilename);
+        return false;
+    }
+
+    // Read the width and height of the current DICOM file, as needed, e.g., for calculating the pixel spacing
+    ds_man.getDataset()->findAndGetLongInt(DcmTagKey(0x0028, 0x0010),dcmRows);
+    ds_man.getDataset()->findAndGetLongInt(DcmTagKey(0x0028, 0x0011),dcmCols);
+
+    // Now calulate all dynamic variables
     calculateVariables();
     calculateOrientation();
 
+    // Prepare the list of DICOM tags to be written
     tags.clear();
-
     for (auto& mapEntry : *mapping)
     {
         std::string dcmPath=mapEntry.first;
@@ -144,26 +166,6 @@ bool sdtTagWriter::processFile()
     std::cout << "-----------------------------" << std::endl << std::endl;
     */
 
-    // Evaluate and write the results
-    return writeFile();
-}
-
-
-bool sdtTagWriter::writeFile()
-{
-    OFCondition result=EC_Normal;
-
-    MdfDatasetManager ds_man;
-
-    // Load file into dataset manager
-    result=ds_man.loadFile(inputFilename.c_str());
-
-    if (result.bad())
-    {
-        LOG("ERROR: Unable to load file " << inputFilename);
-        return false;
-    }
-
     // Modify DICOM tags in loaded file
     for (auto& tag : tags)
     {
@@ -177,7 +179,6 @@ bool sdtTagWriter::writeFile()
 
     // Save modified file into output folder
     result=ds_man.saveFile(outputFilename.c_str());
-
     if (result.bad())
     {
         LOG("ERROR: Unable to write file " << outputFilename);
@@ -581,8 +582,21 @@ void sdtTagWriter::prepareTime()
 
 void sdtTagWriter::calculateOrientation()
 {
-    // TODO
+    // Use the 0th slab for 3D sequences for now. Multi-slab 3D scans are not yet
+    // properly supported here
     int sliceToUse=0;
+
+    if (!is3DScan)
+    {
+        // Read the slice information for each slice from the TWIX file
+        // TODO: Validate in 2D TWIX file if this makes sense
+        sliceToUse=slice;
+
+        if (sliceToUse>=sliceArraySize)
+        {
+            sliceToUse=sliceArraySize-1;
+        }
+    }
 
     std::string pathBase="mrprot.sSliceArray.asSlice["+std::to_string(sliceToUse)+"].";
 
@@ -607,13 +621,20 @@ void sdtTagWriter::calculateOrientation()
 
     if (is3DScan)
     {
-        double sliceThick=thickness/sliceCount;
-        double sliceShift = sliceThick*(slice-1)-sliceThick*(sliceCount-1)/2 ;
+        double sliceThickness3D=thickness/sliceCount;
+        double sliceShift = sliceThickness3D*(slice-1)-sliceThickness3D*(sliceCount-1)/2 ;
         center(2) += sliceShift;
+
+        sliceThickness=std::to_string(sliceThickness3D);
+
+        // 3D sequences normally don't have slice gaps (multi-slab protocols not covered here)
+        slicesSpacing=std::to_string(0.);
     }
     else
     {
-        // TODO
+        sliceThickness=std::to_string(thickness);
+
+        // TODO: Check how slice spacing is read from TWIX file
     }
 
     arma::mat ImgOri;
@@ -664,6 +685,8 @@ void sdtTagWriter::calculateOrientation()
     imageOrientationPatient=ImageOrientationPatient.str();
 
     sliceLocation=std::to_string(center(2));
+
+    // TODO: Calculate dwelltime, pixelspacing, check slice spacing, acquisition matrix
 }
 
 

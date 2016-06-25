@@ -105,6 +105,7 @@ void sdtTagMapping::setupDefaultMapping()
     // TODO:
     //addTag("0018", "1312", ""             ); // In-plane Phase Encoding Direction
 
+    // TODO: acquition matrix, bandwidth
     // TODO: Set slice orientation: DCM_PositionReferenceIndicator
 }
 
