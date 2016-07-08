@@ -626,15 +626,14 @@ void sdtTagWriter::calculateOrientation()
         center(2) += sliceShift;
 
         sliceThickness=std::to_string(sliceThickness3D);
-
-        // 3D sequences normally don't have slice gaps (multi-slab protocols not covered here)
-        slicesSpacing=std::to_string(0.);
+        slicesSpacing=sliceThickness;
     }
     else
     {
         sliceThickness=std::to_string(thickness);
 
-        // TODO: Check how slice spacing is read from TWIX file
+        // TODO: Check how to read slice gap from the TWIX file
+        slicesSpacing=sliceThickness;
     }
 
     arma::mat ImgOri;
@@ -686,7 +685,10 @@ void sdtTagWriter::calculateOrientation()
 
     sliceLocation=std::to_string(center(2));
 
-    // TODO: Calculate dwelltime, pixelspacing, check slice spacing, acquisition matrix
+    // TODO: Calculate dwelltime, pixelspacing, check slice spacing, acquisition matrix   
+    // Set pixel spacing from FOV size and width/height
+    // Set acquisition matrix from width / height
+    // Calculate dwelltime
 }
 
 
