@@ -654,7 +654,7 @@ void sdtTagWriter::calculateOrientation()
        << 0 << sin(beta) << cos(beta)  << arma::endr;
 
     arma::mat m_001; m_001 << 0 << 0 << 1;
-    arma::mat m_010; m_010 << 0 << 0 << 1;
+    arma::mat m_010; m_010 << 0 << 1 << 0;
     auto alpha = -acos(dot(normal2, Rx * m_001.t()));
     auto Rz = rotation_matrix(alpha, Rx * m_010.t());
 
