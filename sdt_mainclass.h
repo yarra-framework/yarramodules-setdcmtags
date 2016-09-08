@@ -40,6 +40,7 @@ public:
     bool checkFolderExistence();
     bool generateFileList();
     bool parseFilename(std::string filename, seriesmode& mode, int& series, int& slice);
+    int  getAppendedNumber(std::string input);
 
     bool generateUIDs();
     bool processSeries();

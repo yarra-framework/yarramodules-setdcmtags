@@ -323,6 +323,7 @@ bool sdtMainclass::generateFileList()
 
             if (!success)
             {
+                // TODO: Output error message
                 break;
             }
             else
@@ -349,6 +350,26 @@ bool sdtMainclass::generateFileList()
     */
 
     return success;
+}
+
+
+int sdtMainclass::getAppendedNumber(std::string input)
+{
+    // TODO
+    int pos=0;
+
+    for (int i=input.length()-1; i>=0; i--)
+    {
+        if (!isdigit(input.at(i)))
+        {
+            break;
+        }
+        pos=i;
+    }
+
+    input.erase(0,pos);
+
+    return atoi(input.c_str());
 }
 
 
@@ -393,15 +414,21 @@ bool sdtMainclass::parseFilename(std::string filename, seriesmode& mode, int& se
         tmpSeries.erase(dotPos, std::string::npos);
         tmpSlice.erase(0,dotPos+1);
 
-        // Remove all characters and keep only numbers
-        tmpSeries.erase(std::remove_if(tmpSeries.begin(),tmpSeries.end(),isnotdigit()),tmpSeries.end());
-        series=atoi(tmpSeries.c_str());
+        // Keep only the number at the end of the string and remove any preceeding characters
+        series=getAppendedNumber(tmpSeries);
     }
 
-    // Remove all characters and keep only numbers
-    tmpSlice.erase(std::remove_if(tmpSlice.begin(),tmpSlice.end(),isnotdigit()),tmpSlice.end());
-    slice=atoi(tmpSlice.c_str());
+    // Keep only the number at the end of the string and remove any preceeding characters
+    slice=getAppendedNumber(tmpSlice);
+
+    // Error checking for reasonable value range of slice and series number
+    if ((slice<0) || (series<0))
+    {
+        LOG("ERROR: Invalid series or slice number (series " << series << ", slice " << slice << ")");
+        return false;
+    }
 
     return true;
 }
+
 
