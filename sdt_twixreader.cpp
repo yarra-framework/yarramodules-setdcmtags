@@ -60,7 +60,7 @@ bool sdtTWIXReader::readFile(std::string filename)
         file.read((char*)&id,   sizeof(uint32_t));  // ID
         file.read((char*)&ndset,sizeof(uint32_t));  // # data sets
 
-        if (ndset>30)
+        if ((ndset>30) || (ndset<1))
         {
             // If there are more than 30 measurements, it's unlikely that the
             // file is a valid TWIX file
@@ -69,7 +69,7 @@ bool sdtTWIXReader::readFile(std::string filename)
             errorReason="File is invalid (invalid number of measurements)";
             file.close();
             return false;
-        }
+        }      
 
         veh.resize(ndset);
 
