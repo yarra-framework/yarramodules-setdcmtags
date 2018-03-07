@@ -169,6 +169,10 @@ void sdtMainclass::perform(int argc, char *argv[])
         return;
     }
 
+    // Read the settings from the mode file and/or dynamic-settings file (if provided)
+    tagMapping.readConfiguration(std::string(modeFile.c_str()),std::string(dynamicSettingsFile.c_str()));
+    tagMapping.setupGlobalConfiguration();
+
     if (!generateFileList())
     {
         LOG("Error while parsing input folder");
@@ -185,10 +189,6 @@ void sdtMainclass::perform(int argc, char *argv[])
         returnValue=1;
         return;
     }
-
-    // Read the settings from the mode file and/or dynamic-settings file (if provided)
-    tagMapping.readConfiguration(std::string(modeFile.c_str()),std::string(dynamicSettingsFile.c_str()));
-    tagMapping.setupGlobalConfiguration();
 
     // Loop over all series and process DICOM files
     if (!processSeries())
@@ -304,20 +304,28 @@ bool sdtMainclass::checkFolderExistence()
 
 bool sdtMainclass::generateFileList()
 {
-    bool success   =true;
-    int series     =1;
-    int slice      =1;
-    seriesmode mode=NOT_DEFINED;
-    int fileCount  =0;
+    bool success         =true;
+    int  series          =1;
+    int  slice           =1;
+    seriesmode mode      =NOT_DEFINED;
+    int  fileCount       =0;
+    bool interleaveSeries=false;
+
+    // Check if the interleaved series mode has been selected
+    if (tagMapping.isGlobalOptionSet(SDT_OPT_INTERLEAVE_SERIES))
+    {
+        interleaveSeries=true;
+        LOG("Interleaving series (series in slices).");
+    }
 
     fs::path inputPath(std::string(inputDir.c_str()));
 
-    for(const auto& dir_entry : boost::make_iterator_range(fs::directory_iterator(inputPath), {}))
+    for (const auto& dir_entry : boost::make_iterator_range(fs::directory_iterator(inputPath), {}))
     {
         if (dir_entry.path().extension()==".dcm")
         {
             // Extract the slice and series number from the filename
-            success=parseFilename(dir_entry.path().stem().string(), mode, series, slice);
+            success=parseFilename(dir_entry.path().stem().string(), mode, series, slice, interleaveSeries);
 
             //std::cout << "File: " << dir_entry.path().string() << "  Series: " << series << "  Slice: " << slice << std::endl;
 
@@ -373,7 +381,7 @@ int sdtMainclass::getAppendedNumber(std::string input)
 }
 
 
-bool sdtMainclass::parseFilename(std::string filename, seriesmode& mode, int& series, int& slice)
+bool sdtMainclass::parseFilename(std::string filename, seriesmode& mode, int& series, int& slice, bool interleaveSeries)
 {
     series=1;
     slice=1;
@@ -426,6 +434,18 @@ bool sdtMainclass::parseFilename(std::string filename, seriesmode& mode, int& se
     {
         LOG("ERROR: Invalid series or slice number (series " << series << ", slice " << slice << ")");
         return false;
+    }
+
+    if (mode==MULTI_SERIES)
+    {
+        if (interleaveSeries)
+        {
+            // For interleaved series mode, swap the slice and series number
+            int tmpSeriesValue=series;
+            int tmpSliceValue=slice;
+            series=tmpSliceValue;
+            slice=tmpSeriesValue;
+        }
     }
 
     return true;

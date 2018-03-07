@@ -5,7 +5,7 @@
 #include <map>
 #include <vector>
 
-#define SDT_VERSION "0.1b8"
+#define SDT_VERSION "0.1b9"
 
 #define SDT_TAG_RAW '@'
 #define SDT_TAG_VAR '#'
@@ -43,6 +43,7 @@
 #define SDT_OPT_SERIESMODE_TIME     "TIME"
 #define SDT_OPT_FRAMEDURATION       "FrameDuration"
 #define SDT_OPT_TIMEOFFSET          "TimeOffset"
+#define SDT_OPT_INTERLEAVE_SERIES   "InterleaveSeries"
 
 #define SDT_TRUE                    "TRUE"
 

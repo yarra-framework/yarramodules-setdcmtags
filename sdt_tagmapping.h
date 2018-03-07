@@ -30,6 +30,8 @@ public:
     stringmap currentTags;
     stringmap currentOptions;
 
+    bool isGlobalOptionSet(std::string option);
+
 protected:
     void setupDefaultMapping();
     void evaluateSeriesOptions(int series);

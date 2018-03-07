@@ -141,7 +141,7 @@ void sdtTagMapping::readConfiguration(std::string modeFilename, std::string dyna
 
 
 void sdtTagMapping::setupGlobalConfiguration()
-{
+{        
     // Evaluate global configuration read from mode file. This will add or overwrite the default mapping
     try
     {
@@ -157,7 +157,20 @@ void sdtTagMapping::setupGlobalConfiguration()
             }
             else
             {
-                globalOptions[key]=value;
+                // Clear all default mappings if ClearDefaults=true is found
+
+                // TOOD: This only works as expeceted if the ClearDefaults option comes at first
+                //       entry in the section. Otherwise, the already overwritten tags might be
+                //       lost. A better mechanism should be found here.
+
+                if ((key==SDT_OPT_CLEARDEFAULTS) && (value==SDT_TRUE))
+                {
+                    globalTags.clear();
+                }
+                else
+                {
+                    globalOptions[key]=value;
+                }
             }
         }
     }
@@ -181,7 +194,20 @@ void sdtTagMapping::setupGlobalConfiguration()
             }
             else
             {
-                globalOptions[key]=value;
+                // Clear all default mappings if ClearDefaults=true is found
+
+                // TOOD: This only works as expeceted if the ClearDefaults option comes at first
+                //       entry in the section. Otherwise, the already overwritten tags might be
+                //       lost. A better mechanism should be found here.
+
+                if ((key==SDT_OPT_CLEARDEFAULTS) && (value==SDT_TRUE))
+                {
+                    globalTags.clear();
+                }
+                else
+                {
+                    globalOptions[key]=value;
+                }
             }
         }
     }
@@ -190,6 +216,19 @@ void sdtTagMapping::setupGlobalConfiguration()
     }
 
     //std::cout << key << "=" << value << std::endl;  //debug
+}
+
+
+bool sdtTagMapping::isGlobalOptionSet(std::string option)
+{
+    if (globalOptions.find(option)!=globalOptions.end())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 
@@ -217,6 +256,11 @@ void sdtTagMapping::setupSeriesConfiguration(int series)
             else
             {
                 // Clear all default mappings if ClearDefaults=true is found
+
+                // TOOD: This only works as expeceted if the ClearDefaults option comes at first
+                //       entry in the section. Otherwise, the already overwritten tags might be
+                //       lost. A better mechanism should be found here.
+
                 if ((key==SDT_OPT_CLEARDEFAULTS) && (value==SDT_TRUE))
                 {
                     currentTags.clear();
@@ -249,6 +293,11 @@ void sdtTagMapping::setupSeriesConfiguration(int series)
             else
             {
                 // Clear all default mappings if ClearDefaults=true is found
+
+                // TOOD: This only works as expeceted if the ClearDefaults option comes at first
+                //       entry in the section. Otherwise, the already overwritten tags might be
+                //       lost. A better mechanism should be found here.
+
                 if ((key==SDT_OPT_CLEARDEFAULTS) && (value==SDT_TRUE))
                 {
                     currentTags.clear();
