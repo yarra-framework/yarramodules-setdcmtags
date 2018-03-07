@@ -44,6 +44,7 @@
 #define SDT_OPT_FRAMEDURATION       "FrameDuration"
 #define SDT_OPT_TIMEOFFSET          "TimeOffset"
 #define SDT_OPT_INTERLEAVE_SERIES   "InterleaveSeries"
+#define SDT_OPT_STACK_SERIES        "StackSeries"
 
 #define SDT_TRUE                    "TRUE"
 

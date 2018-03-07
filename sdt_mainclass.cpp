@@ -343,6 +343,28 @@ bool sdtMainclass::generateFileList()
         }
     }
 
+    // Check if the series should be stacked into a single series
+    if (tagMapping.isGlobalOptionSet(SDT_OPT_STACK_SERIES))
+    {
+        LOG("Stacking series.");
+
+        // Create temporary copy of seriesMap
+        std::map<int, sdtSeriesInfo> bufferMap=seriesMap;
+        seriesMap.clear();
+
+        // Resort all image into a single series
+        int imageCount=0;
+
+        for(auto entry : bufferMap)
+        {
+            for(auto file : entry.second.sliceMap)
+            {
+                seriesMap[0].sliceMap[imageCount]=file.second;
+                imageCount++;
+            }
+        }
+    }
+
     LOG("Processing " << fileCount << " files in " << seriesMap.size() << " series.");
 
     /* // DEBUG: For outputting file list
