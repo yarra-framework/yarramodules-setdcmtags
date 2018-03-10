@@ -408,6 +408,13 @@ bool sdtMainclass::parseFilename(std::string filename, seriesmode& mode, int& se
     series=1;
     slice=1;
 
+    // Check if filename starts with "reco.", as created by the GRASP C++ module.
+    // If so, remove it.
+    if (filename.find("reco.")==0)
+    {
+        filename.erase(0,5);
+    }
+
     // Detect if the filename is of from slice[no].dcm or series[no].slice[no].dcm
     seriesmode neededMode=SINGLE_SERIES;
 
