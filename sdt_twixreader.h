@@ -66,14 +66,14 @@ public:
     void addSearchEntry(std::string id, std::string searchString, twixitemtype type, bool mandatory=true);
 
     bool readMRProt(std::ifstream& file);
-    void parseXProtLine(std::string& line, std::ifstream& file);
-    void parseMRProtLine(std::string line);
+    bool parseXProtLine(std::string& line, std::ifstream& file);
+    bool parseMRProtLine(std::string line);
 
     void removeQuotationMarks(std::string& line);
     void removeLeadingWhitespace(std::string& line);
     void removeEnclosingWhitespace(std::string& line);
     void removePrecisionTag(std::string& line);
-    void findBraces(std::string& line, std::ifstream& file);
+    bool findBraces(std::string& line, std::ifstream& file);
     bool splitFrameOfReferenceTime(std::string input, std::string& timeString, std::string& dateString);
 
     void calculateAdditionalValues();    

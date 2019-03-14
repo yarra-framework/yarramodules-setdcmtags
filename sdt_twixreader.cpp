@@ -96,7 +96,7 @@ bool sdtTWIXReader::readFile(std::string filename)
         {
             fileType="VD/VE";
         }
-        LOG("WARNING: Unusual header size " << headerLength << " (file type " << fileType << ")");
+        //LOG("WARNING: Unusual header size " << headerLength << " (file type " << fileType << ")");
 
         errorReason="File is invalid (unusual header size)";
         file.close();
@@ -109,8 +109,8 @@ bool sdtTWIXReader::readFile(std::string filename)
     headerEnd=lastMeasOffset+headerLength;
 
     // Parse header
-    LOG("Header size is " << headerLength << " bytes.");
-    LOG("");
+    //LOG("Header size is " << headerLength << " bytes.");
+    //LOG("");
 
     if (dbgDumpProtocol)
     {
@@ -260,7 +260,10 @@ bool sdtTWIXReader::readMRProt(std::ifstream& file)
             return true;
         }
 
-        parseMRProtLine(line);
+        if (!parseMRProtLine(line))
+        {
+            return false;
+        }
     }
 
     return false;
@@ -271,7 +274,7 @@ static std::string sdt_wipKey_VB="sWiPMemBlock";
 static std::string sdt_wipKey_VD="sWipMemBlock";
 
 
-void sdtTWIXReader::parseMRProtLine(std::string line)
+bool sdtTWIXReader::parseMRProtLine(std::string line)
 {
     // Remove all tabs from the line (as introduced in VD)
     line.erase(std::remove(line.begin(), line.end(), '\t'), line.end());
@@ -281,7 +284,7 @@ void sdtTWIXReader::parseMRProtLine(std::string line)
     if (equalPos==std::string::npos)
     {
         LOG("WARNING: Invalid MR Prot line found: " << line);
-        return;
+        return false;
     }
 
     // Get everything before the "=" separator
@@ -313,10 +316,12 @@ void sdtTWIXReader::parseMRProtLine(std::string line)
 
     // Store in results table
     values[key]=value;
+
+    return true;
 }
 
 
-void sdtTWIXReader::parseXProtLine(std::string& line, std::ifstream& file)
+bool sdtTWIXReader::parseXProtLine(std::string& line, std::ifstream& file)
 {
     int indexFound=-1;
     size_t searchPos=std::string::npos;
@@ -334,12 +339,15 @@ void sdtTWIXReader::parseXProtLine(std::string& line, std::ifstream& file)
             value.erase(0,searchPos+searchList.at(i).searchString.length());
 
             // Search for enclosing {}
-            findBraces(value, file);
+            if (!findBraces(value, file))
+            {
+                return false;
+            }
 
             switch (searchList.at(i).type)
             {
-            case tSTRING:
             default:
+            case tSTRING:
                 removeEnclosingWhitespace(value);
                 removeQuotationMarks(value);
                 break;
@@ -381,6 +389,8 @@ void sdtTWIXReader::parseXProtLine(std::string& line, std::ifstream& file)
     {
         searchList.erase(searchList.begin()+indexFound);
     }
+
+    return true;
 }
 
 
@@ -436,7 +446,7 @@ void sdtTWIXReader::removePrecisionTag(std::string& line)
 }
 
 
-void sdtTWIXReader::findBraces(std::string& line, std::ifstream& file)
+bool sdtTWIXReader::findBraces(std::string& line, std::ifstream& file)
 {
     // Continue reading lines until the closing brace is found
     while ((!file.eof()) && (file.tellg()<headerEnd) && (line.find("}")==std::string::npos))
@@ -461,6 +471,7 @@ void sdtTWIXReader::findBraces(std::string& line, std::ifstream& file)
     } else
     {
         LOG("WARNING: Incorrect format " << line);
+        return false;
     }
 
     size_t trailingBracePos=line.find("}");
@@ -468,6 +479,8 @@ void sdtTWIXReader::findBraces(std::string& line, std::ifstream& file)
     {
         line.erase(trailingBracePos);
     }
+
+    return true;
 }
 
 

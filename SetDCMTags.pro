@@ -2,7 +2,7 @@ TARGET = SetDCMTags
 CONFIG -= qt
 
 # Define identifier for Ubuntu Linux version (UBUNTU_1204 / UBUNTU_1404)
-BUILD_OS=UBUNTU_1204
+BUILD_OS=UBUNTU_1404
 
 equals( BUILD_OS, "UBUNTU_1404" ) {
     message( "Configuring for Ubuntu 14.04" )
@@ -47,17 +47,26 @@ QMAKE_CXXFLAGS += -DARMA_DONT_USE_WRAPPER
 INCLUDEPATH += /usr/local/include/dcmtk/dcmnet/
 INCLUDEPATH += /usr/local/include/dcmtk/config/
 
+
 #LIBS =  -ldcmdata -loflog -lofstd -lz -lpthread -lrt
 LIBS =  -lpthread -lrt
 
-LIBS += /usr/lib/libdcmdata.a
-LIBS += /usr/lib/liboflog.a
-LIBS += /usr/lib/libofstd.a
+LIBS += /usr/local/lib/libdcmdata.a
+LIBS += /usr/local/lib/liboflog.a
+LIBS += /usr/local/lib/libofstd.a
 LIBS += -lz
-LIBS += /usr/lib/libblas.a
+#LIBS += /usr/lib/libblas.a
+LIBS += /usr/lib/x86_64-linux-gnu/libblas.a
 LIBS += $$BOOST_PATH/libboost_filesystem.a
 LIBS += $$BOOST_PATH/libboost_system.a
 LIBS += $$BOOST_PATH/libboost_date_time.a
+
+LIBS += $$ICU_PATH/libicui18n.a
+LIBS += $$ICU_PATH/libicuuc.a
+LIBS += $$ICU_PATH/libicudata.a
+
+LIBS += -ldl
+
 
 #LIBS += $$BOOST_PATH/libarmadillo.a
 
