@@ -2,6 +2,7 @@
 #include "../sdt_global.h"
 
 #include <iostream>
+#include <fstream>
 
 #include <boost/filesystem.hpp>
 #include <boost/range/iterator_range.hpp>

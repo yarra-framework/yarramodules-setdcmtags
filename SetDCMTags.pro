@@ -2,7 +2,7 @@ TARGET = SetDCMTags
 CONFIG -= qt
 
 # Define identifier for Ubuntu Linux version (UBUNTU_1204 / UBUNTU_1404)
-BUILD_OS=UBUNTU_1404
+BUILD_OS=UBUNTU_1204
 
 equals( BUILD_OS, "UBUNTU_1404" ) {
     message( "Configuring for Ubuntu 14.04" )
@@ -51,12 +51,21 @@ INCLUDEPATH += /usr/local/include/dcmtk/config/
 #LIBS =  -ldcmdata -loflog -lofstd -lz -lpthread -lrt
 LIBS =  -lpthread -lrt
 
-LIBS += /usr/local/lib/libdcmdata.a
-LIBS += /usr/local/lib/liboflog.a
-LIBS += /usr/local/lib/libofstd.a
+equals( BUILD_OS, "UBUNTU_1404" ) {
+    LIBS += /usr/local/lib/libdcmdata.a
+    LIBS += /usr/local/lib/liboflog.a
+    LIBS += /usr/local/lib/libofstd.a
+    LIBS += /usr/lib/x86_64-linux-gnu/libblas.a
+}
+equals( BUILD_OS, "UBUNTU_1204" ) {
+    LIBS += /usr/lib/libdcmdata.a
+    LIBS += /usr/lib/liboflog.a
+    LIBS += /usr/lib/libofstd.a
+    LIBS += /usr/lib/libblas.a
+}
+
 LIBS += -lz
 #LIBS += /usr/lib/libblas.a
-LIBS += /usr/lib/x86_64-linux-gnu/libblas.a
 LIBS += $$BOOST_PATH/libboost_filesystem.a
 LIBS += $$BOOST_PATH/libboost_system.a
 LIBS += $$BOOST_PATH/libboost_date_time.a

@@ -2,7 +2,7 @@ TARGET = GetSeqParams
 CONFIG -= qt
 
 # Define identifier for Ubuntu Linux version (UBUNTU_1204 / UBUNTU_1404)
-BUILD_OS=UBUNTU_1404
+BUILD_OS=UBUNTU_1204
 
 equals( BUILD_OS, "UBUNTU_1404" ) {
     message( "Configuring for Ubuntu 14.04" )
