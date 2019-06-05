@@ -1,12 +1,12 @@
 TARGET = SetDCMTags
 CONFIG -= qt
 
-# Define identifier for Ubuntu Linux version (UBUNTU_1204 / UBUNTU_1404)
-BUILD_OS=UBUNTU_1204
+# Define identifier for Ubuntu Linux version (UBUNTU_1204 / UBUNTU_1604)
+BUILD_OS=UBUNTU_1604
 
-equals( BUILD_OS, "UBUNTU_1404" ) {
-    message( "Configuring for Ubuntu 14.04" )
-    QMAKE_CXXFLAGS += -DUBUNTU_1404
+equals( BUILD_OS, "UBUNTU_1604" ) {
+    message( "Configuring for Ubuntu 16.04" )
+    QMAKE_CXXFLAGS += -DUBUNTU_1604
     ICU_PATH=/usr/lib/x86_64-linux-gnu
     BOOST_PATH=/usr/lib/x86_64-linux-gnu
 }
@@ -51,11 +51,12 @@ INCLUDEPATH += /usr/local/include/dcmtk/config/
 #LIBS =  -ldcmdata -loflog -lofstd -lz -lpthread -lrt
 LIBS =  -lpthread -lrt
 
-equals( BUILD_OS, "UBUNTU_1404" ) {
+equals( BUILD_OS, "UBUNTU_1604" ) {
     LIBS += /usr/local/lib/libdcmdata.a
     LIBS += /usr/local/lib/liboflog.a
     LIBS += /usr/local/lib/libofstd.a
-    LIBS += /usr/lib/x86_64-linux-gnu/libblas.a
+    #LIBS += /usr/lib/x86_64-linux-gnu/libblas.a
+    LIBS += /usr/lib/libblas.a
 }
 equals( BUILD_OS, "UBUNTU_1204" ) {
     LIBS += /usr/lib/libdcmdata.a
