@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright (C) 2003-2013, OFFIS e.V.
+ *  Copyright (C) 2003-2017, OFFIS e.V.
  *  All rights reserved.  See COPYRIGHT file for details.
  *
  *  This software and supporting documentation were developed by
@@ -19,7 +19,7 @@
  *
  */
 
-//#include "dcmtk/config/cfunix.h"
+
 #include "dcmtk/config/osconfig.h"   // make sure OS specific configuration is included first
 
 #include "mdfdsman.h"
@@ -100,12 +100,12 @@ static DcmTagKey getTagKeyFromDictionary(OFString tag)
     DcmTagKey key(0xffff,0xffff);
     const DcmDataDictionary& globalDataDict = dcmDataDict.rdlock();
     const DcmDictEntry *dicent = globalDataDict.findEntry(tag.c_str());
-    // successfull lookup in dictionary -> translate to tag and return
+    // successful lookup in dictionary -> translate to tag and return
     if (dicent)
     {
         key = dicent->getKey();
     }
-    dcmDataDict.unlock();
+    dcmDataDict.rdunlock();
     return key;
 }
 
@@ -299,7 +299,7 @@ static OFCondition splitTagPath(OFString &tag_path,
 
 OFCondition MdfDatasetManager::modifyOrInsertPath(OFString tag_path,
                                                   const OFString &value,
-                                                  const OFBool &only_modify,
+                                                  const OFBool only_modify,
                                                   const OFBool update_metaheader,
                                                   const OFBool ignore_missing_tags,
                                                   const OFBool no_reservation_checks)
@@ -369,7 +369,7 @@ OFCondition MdfDatasetManager::modifyOrInsertPath(OFString tag_path,
 
 OFCondition MdfDatasetManager::modifyOrInsertFromFile(OFString tag_path,
                                                       const OFString &filename,
-                                                      const OFBool &only_modify,
+                                                      const OFBool only_modify,
                                                       const OFBool update_metaheader,
                                                       const OFBool ignore_missing_tags,
                                                       const OFBool no_reservation_checks)
@@ -723,8 +723,8 @@ OFBool MdfDatasetManager::isTagInDictionary(const DcmTagKey &search_key)
 {
     const DcmDataDictionary& globalDataDict = dcmDataDict.rdlock();
     const DcmDictEntry *dicent = globalDataDict.findEntry(search_key,NULL);
-    // successfull lookup in dictionary -> translate to tag and return
-    dcmDataDict.unlock();
+    // successful lookup in dictionary -> translate to tag and return
+    dcmDataDict.rdunlock();
     if (dicent)
         return OFTrue;
     else return OFFalse;
