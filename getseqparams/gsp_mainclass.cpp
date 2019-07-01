@@ -31,11 +31,17 @@ void gspMainclass::perform(int argc, char *argv[])
 {
     if (argc<3)
     {
+        #if (BUILD_OS==WINDOWS)
+            std::string targetname="yct_getseqparams";
+        #else
+            std::string targetname="GetSeqParams";
+        #endif
+
         LOG("");
         LOG("Yarra GetSeqParams v" << GSP_VER);
         LOG("------------------------");
-        LOG("");
-        LOG("Usage: GetSeqParams [TWIX file] [command] [options]");
+        LOG("");        
+        LOG("Usage: " << targetname << " [TWIX file] [command] [options]");
         LOG("");
         LOG("Available commands:");
         LOG("");
