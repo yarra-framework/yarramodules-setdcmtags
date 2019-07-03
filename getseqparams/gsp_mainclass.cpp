@@ -9,7 +9,7 @@
 
 namespace fs = boost::filesystem;
 
-#define GSP_VER "0.1a"
+#define GSP_VER "0.1b2"
 
 
 std::string const gspMainclass::summaryItems[] = {"PatientName", "PatientID", "ProtocolName", "BodyPartExamined", "TotalScanTimeSec",
@@ -42,16 +42,16 @@ void gspMainclass::perform(int argc, char *argv[])
         #endif
 
         LOG("");
-        LOG("Yarra GetSeqParams v" << GSP_VER);
-        LOG("------------------------");
+        LOG("Yarra Client Tools - GetSeqParams " << GSP_VER);
+        LOG("---------------------------------------");
         LOG("");        
         LOG("Usage: " << targetname << " [TWIX file] [command] [options]");
         LOG("");
         LOG("Available commands:");
         LOG("");
-        LOG("    show              -- Shows relevant parameters from TWIX file");
-        LOG("    show  [parameter] -- Shows specific parameter from TWIX file");
-        LOG("    show  all         -- Shows all parameters from TWIX file");
+        LOG("    show              -- Shows relevant parameters from Twix file");
+        LOG("    show  [parameter] -- Shows specific parameter from Twix file");
+        LOG("    show  all         -- Shows all parameters from Twix file");
         LOG("    write [filename]  -- Writes parameter summary into ini file");
         LOG("");
 
