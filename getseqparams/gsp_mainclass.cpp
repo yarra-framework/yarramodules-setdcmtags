@@ -9,13 +9,14 @@
 
 namespace fs = boost::filesystem;
 
-#define GSP_VER "0.1b2"
+#define GSP_VER "0.1b3"
 
 
 std::string const gspMainclass::summaryItems[] = {"PatientName", "PatientID", "ProtocolName", "BodyPartExamined", "TotalScanTimeSec",
                                                   "mrprot.sKSpace.lBaseResolution", "mrprot.sKSpace.lRadialViews",
                                                   "mrprot.sKSpace.lImagesPerSlab", "mrprot.sKSpace.lPartitions",
-                                                  "mrprot.tSequenceFileName", "mrprot.sProtConsistencyInfo.tBaselineString",
+                                                  "mrprot.tSequenceFileName",
+                                                  "SoftwareVersions", "mrprot.sProtConsistencyInfo.tBaselineString",
                                                   "ManufacturersModelName", "MagneticFieldStrength", "DeviceSerialNumber"};
 
 
