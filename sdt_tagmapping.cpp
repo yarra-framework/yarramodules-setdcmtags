@@ -65,7 +65,7 @@ void sdtTagMapping::setupDefaultMapping()
 
     addTag("0018", "0084", "$DIV(@Frequency,1000000)"    ); // Imaging Frequency
 
-    addTag("0018", "0080", "$DIV(@mrprot.alTR[0],1000,0)"); // Repetition Time
+    addTag("0018", "0080", "$DIV(@mrprot.alTR[0],1000,2)"); // Repetition Time
     addTag("0018", "0081", "$DIV(@mrprot.alTE[0],1000,2)"); // Echo Time
     addTag("0018", "1314", "@mrprot.adFlipAngleDegree[0]"); // Flip Angle
 
