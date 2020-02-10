@@ -34,7 +34,7 @@ void sdtTagMapping::setupDefaultMapping()
     addTag("0018", "0024", "@SequenceString"             ); // Sequence Name
 
     addTag("0018", "0087", "@MagneticFieldStrength"      ); // Magnetic Field Strength
-    addTag("0018", "0100", "@DeviceSerialNumber"         ); // Device Serial Number
+    addTag("0018", "1000", "@DeviceSerialNumber"         ); // Device Serial Number
     addTag("0018", "1030", "@ProtocolName"               ); // Protocol Name
     addTag("0008", "103E", "@ProtocolName"               ); // Series Description
 
