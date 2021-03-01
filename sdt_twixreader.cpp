@@ -538,7 +538,7 @@ void sdtTWIXReader::prepareSearchList()
     addSearchEntry("InstitutionName",            "<ParamString.\"InstitutionName\">"        , tSTRING);
     addSearchEntry("MagneticFieldStrength",      "<ParamDouble.\"flMagneticFieldStrength\">", tDOUBLE);
     addSearchEntry("Frequency",                  "<ParamLong.\"lFrequency\">"               , tLONG  );
-    addSearchEntry("ResonantNucleus",            "<ParamString.\"ResonantNucleus\">"        , tSTRING);
+    addSearchEntry("ResonantNucleus",            "<ParamString.\"ResonantNucleus\">"        , tSTRING, false);
 
     addSearchEntry("BolusAgent",                 "<ParamString.\"BolusAgent\">"             , tSTRING);
     addSearchEntry("ContrastBolusVolume",        "<ParamDouble.\"ContrastBolusVolume\">"    , tDOUBLE);
@@ -559,5 +559,6 @@ void sdtTWIXReader::prepareSearchList()
     addSearchEntry("ScanTimeSec",                "<ParamLong.\"lScanTimeSec\">"             , tLONG  );
     addSearchEntry("TotalScanTimeSec",           "<ParamLong.\"lTotalScanTimeSec\">"        , tLONG  );
 
-    addSearchEntry("TablePosition",              "<ParamLong.\"SBCSOriginPositionZ\">"      , tLONG  );
+    addSearchEntry("TablePosition",              "<ParamLong.\"SBCSOriginPositionZ\">"      , tLONG  );    
 }
+
