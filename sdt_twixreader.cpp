@@ -29,7 +29,7 @@ bool sdtTWIXReader::readFile(std::string filename)
     headerEnd=0;
 
     std::ifstream file;
-    file.open(filename.c_str());
+    file.open(filename.c_str(), std::ifstream::in|std::ifstream::binary);
 
     if (!file.is_open())
     {
@@ -71,33 +71,44 @@ bool sdtTWIXReader::readFile(std::string filename)
             return false;
         }      
 
+        if (ndset>1)
+        {
+            values["HasAdjustments"]="Yes";
+        }
+        else
+        {
+            values["HasAdjustments"]="No";
+        }
+        values["ContainedMeasurements"]=std::to_string(ndset);
         veh.resize(ndset);
-
         for (size_t i=0; i<ndset; ++i)
         {
             file.read((char*)&veh[i], VD::ENTRY_HEADER_LEN);
         }
 
-        lastMeasOffset=veh.back().MeasOffset;
-
         // Go to last measurement
+        lastMeasOffset=veh.back().MeasOffset;
         file.seekg(lastMeasOffset);
     }
+    else
+    {
+        values["HasAdjustments"]="No";
+        values["ContainedMeasurements"]="1";
+    }
+
 
     // Find header length
-    file.read((char*)&headerLength, sizeof(uint32_t));
+    file.read((char*)&headerLength, (std::streampos)sizeof(uint32_t));
 
     if ((headerLength<=0) || (headerLength>5000000))
     {
         // File header is invalid
-
         std::string fileType="VB";
         if (fileVersion==VDVE)
         {
             fileType="VD/VE";
         }
         //LOG("WARNING: Unusual header size " << headerLength << " (file type " << fileType << ")");
-
         errorReason="File is invalid (unusual header size)";
         file.close();
         return false;
@@ -105,8 +116,7 @@ bool sdtTWIXReader::readFile(std::string filename)
 
     // Jump back to start of measurement block
     file.seekg(lastMeasOffset);
-
-    headerEnd=lastMeasOffset+headerLength;
+    headerEnd=lastMeasOffset+(uint64_t)headerLength;
 
     // Parse header
     //LOG("Header size is " << headerLength << " bytes.");
@@ -118,7 +128,6 @@ bool sdtTWIXReader::readFile(std::string filename)
     }
 
     bool terminateParsing=false;
-
     while ((!file.eof()) && (file.tellg()<headerEnd) && (!terminateParsing))
     {
         std::string line="";

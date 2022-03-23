@@ -1,7 +1,3 @@
-/*
- *  Taken from https://bitbucket.org/kvahed/protpp
- */
-
 #ifndef SDT_TWIXHEADER_H
 #define SDT_TWIXHEADER_H
 
@@ -21,6 +17,7 @@
 #    define PACKED_MEMBER( __type__, __name__ ) __type__ __name__
 #    define PACKED_STRUCT( __type__, __name__ ) __type__ __name__
 #endif
+
 
 enum EIM_BIT
 {
@@ -55,14 +52,6 @@ enum EIM_BIT
     TREFFECTIVEEND
 };
 
-// Check bit mask
-/*
-#include <bitset>
-static bool bit_set (uint32_t eim, const EIM_BIT eb) {
-    std::bitset<sizeof(uint32_t)*8> mask (eim);
-    return mask.test(eb);
-}
-*/
 
 // VB Header
 namespace VB
@@ -93,6 +82,7 @@ namespace VB
     } MeasHeader;
     const size_t MEAS_HEADER_LEN = sizeof(MeasHeader);
 }
+
 
 // VD Header
 namespace VD

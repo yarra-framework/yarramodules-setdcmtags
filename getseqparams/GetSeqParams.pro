@@ -27,7 +27,7 @@ equals( BUILD_OS, "WINDOWS" ) {
     QMAKE_CXXFLAGS += -DTARGET="yct_getseqparams"
 }
 
-QMAKE_CXXFLAGS += -std=c++11 
+QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp \
     gsp_mainclass.cpp \
@@ -46,8 +46,8 @@ LIBS =  -lpthread
 LIBS += -lz
 
 equals( BUILD_OS, "WINDOWS" ) {
-    LIBS += $$BOOST_PATH/libboost_filesystem-mgw49-mt-x32-1_70.a
     LIBS += $$BOOST_PATH/libboost_system-mgw49-mt-x32-1_70.a
+    LIBS += $$BOOST_PATH/libboost_filesystem-mgw49-mt-x32-1_70.a
     LIBS += $$BOOST_PATH/libboost_date_time-mgw49-mt-x32-1_70.a
 } else {
     LIBS += $$BOOST_PATH/libboost_filesystem.a
