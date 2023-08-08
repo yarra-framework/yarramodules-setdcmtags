@@ -623,7 +623,10 @@ void sdtTagWriter::calculateOrientation()
     {
         double sliceThickness3D=thickness/sliceCount;
         double sliceShift = sliceThickness3D*(slice-1)-sliceThickness3D*(sliceCount-1)/2 ;
-        center(2) += sliceShift;
+        // center(2) += sliceShift;
+        center(0) += normal(0) * sliceShift;
+        center(1) += normal(1) * sliceShift;
+        center(2) += normal(2) * sliceShift;
 
         sliceThickness=std::to_string(sliceThickness3D);
         slicesSpacing=sliceThickness;
@@ -657,21 +660,10 @@ void sdtTagWriter::calculateOrientation()
     arma::mat m_010; m_010 << 0 << 1 << 0;
     auto alpha = -acos(dot(normal2, Rx * m_001.t()));
     auto Rz = rotation_matrix(alpha, Rx * m_010.t());
-
-    auto C = cos(inplaneRot);
-    auto S = sin(inplaneRot);
-    auto OMC = 1.0-C;
-    auto uX = normal(0);
-    auto uY = normal(1);
-    auto uZ = normal(2);
-
-    arma::mat Rip;
-    Rip << C + uX*uX*OMC    << uX*uY*OMC + uZ*S << uX*uZ*OMC - uY*S << arma::endr
-        << uX*uY*OMC - uZ*S << C + uY*uY*OMC    << uY*uZ*OMC + uX*S << arma::endr
-        << uX*uZ*OMC + uY*S << uY*uZ*OMC - uX*S << C + uZ*uZ*OMC    << arma::endr;
+    auto Rip = rotation_matrix(inplaneRot, normal);
 
     arma::mat ImgDir = (Rip * Rz * Rx * ImgOri.t()).t();
-    arma::mat ImgPos = center - ImgDir.row(0) * fov(0)/2 - ImgDir.row(1) * fov(1)/2;
+    arma::mat ImgPos = center - ImgDir.row(0) * fov(0)/2 + ImgDir.row(1) * fov(1)/2;
 
     std::stringstream ImagePositionPatient;
     ImagePositionPatient << std::fixed << ImgPos(0) << "\\" << ImgPos(1) << "\\" << ImgPos(2);
@@ -679,14 +671,21 @@ void sdtTagWriter::calculateOrientation()
 
     std::stringstream ImageOrientationPatient;
     ImageOrientationPatient
-            << int(round(ImgDir(0 , 0))) << "\\" << int(round(ImgDir(0 , 1))) << "\\" << int(round(ImgDir(0 , 2))) << "\\"
-            << int(round(ImgDir(1 , 0))) << "\\" << int(round(ImgDir(1 , 1))) << "\\" << int(round(ImgDir(1 , 2)));
+            <<  ImgDir(0 , 0) << "\\" <<  ImgDir(0 , 1) << "\\" <<  ImgDir(0 , 2) << "\\"
+            << -ImgDir(1 , 0) << "\\" << -ImgDir(1 , 1) << "\\" << -ImgDir(1 , 2);
     imageOrientationPatient=ImageOrientationPatient.str();
 
-    sliceLocation=std::to_string(center(2));
+    //sliceLocation=std::to_string(as_scalar(normal.t() * center));
+    sliceLocation=std::to_string(dot(normal, center));
 
-    // TODO: Calculate dwelltime, pixelspacing, check slice spacing, acquisition matrix   
-    // Set pixel spacing from FOV size and width/height
+    if ((twixReader->getValueDouble("mrprot.sKSpace.lPhaseEncodingLines") > 0) && (twixReader->getValueDouble("mrprot.sKSpace.lBaseResolution") > 0))
+    {
+        std::stringstream pixelSpacingSS;
+        pixelSpacingSS << std::fixed << fov(0) / twixReader->getValueDouble("mrprot.sKSpace.lPhaseEncodingLines") << "\\" << fov(1) /  twixReader->getValueDouble("mrprot.sKSpace.lBaseResolution");
+        pixelSpacing=pixelSpacingSS.str();
+    }
+
+    // TODO: Calculate dwelltime, acquisition matrix
     // Set acquisition matrix from width / height
     // Calculate dwelltime
 }

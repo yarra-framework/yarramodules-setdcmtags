@@ -76,12 +76,13 @@ void sdtTagMapping::setupDefaultMapping()
     addTag("0008", "0008", "ORIGINAL\\PRIMARY"           ); // Image Type
     addTag("0019", "0010", "SIEMENS MR HEADER"           ); // Siemens Private Tag
     addTag("0051", "0010", "SIEMENS MR HEADER"           ); // Siemens Private Tag
-    addTag("0019", "1008", "IMAGE NUM 4"                 ); // Siemens Private Tag
-    addTag("0029", "1008", "IMAGE NUM 4"                 ); // Siemens Private Tag
-    addTag("0051", "1008", "IMAGE NUM 4"                 ); // Siemens Private Tag
     addTag("0029", "0010", "SIEMENS CSA HEADER"          ); // Siemens Private Tag
     addTag("0029", "0011", "SIEMENS MEDCOM HEADER2"      ); // Siemens Private Tag
-    addTag("0029", "1018", "MR"                          ); // Siemens Private Tag
+    // Commented-out for Jakob, as these are causing error messages in the log
+//    addTag("0019", "1008", "IMAGE NUM 4"                 ); // Siemens Private Tag
+//    addTag("0029", "1008", "IMAGE NUM 4"                 ); // Siemens Private Tag
+//    addTag("0051", "1008", "IMAGE NUM 4"                 ); // Siemens Private Tag
+//    addTag("0029", "1018", "MR"                          ); // Siemens Private Tag
 
     addTag("0008", "0020", "#create_date"                ); // Study Date
     addTag("0008", "0030", "#create_time"                ); // Study Time

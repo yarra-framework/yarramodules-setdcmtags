@@ -27857,6 +27857,23 @@ static const DBI_SimpleEntry simpleBuiltinDict[] = {
       EVR_SQ, "UINOverlaySequence", 1, 1, "PrivateTag",
       DcmDictRange_Odd, DcmDictRange_Unspecified,
       "PAPYRUS 3.0" }
+  // Added missing private tags for Siemens MRs
+  , { 0x0019, 0x1008, 0x0019, 0x1008,
+      EVR_LO, "Label", 1, 1, "PrivateTag",
+      DcmDictRange_Odd, DcmDictRange_Unspecified,
+      "Siemens" }
+  , { 0x0029, 0x1008, 0x0029, 0x1008,
+      EVR_LO, "Label", 1, 1, "PrivateTag",
+      DcmDictRange_Odd, DcmDictRange_Unspecified,
+      "Siemens" }
+  , { 0x0029, 0x1018, 0x0029, 0x1018,
+      EVR_LO, "Label", 1, 1, "PrivateTag",
+      DcmDictRange_Odd, DcmDictRange_Unspecified,
+      "Siemens" }
+  , { 0x0051, 0x1008, 0x0051, 0x1008,
+      EVR_CS, "Label", 1, 1, "PrivateTag",
+      DcmDictRange_Odd, DcmDictRange_Unspecified,
+      "Siemens" }
 #endif
 
 };

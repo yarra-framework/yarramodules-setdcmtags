@@ -18,7 +18,7 @@ equals( BUILD_OS, "UBUNTU_1204" ) {
     BOOST_PATH=/usr/local/lib
 }
 
-QMAKE_CXXFLAGS += -std=c++11 -DENABLE_BUILTIN_DICTIONARY -DENABLE_PRIVATE_TAGS
+QMAKE_CXXFLAGS += -std=c++11 -DENABLE_BUILTIN_DICTIONARY -DENABLE_PRIVATE_TAGS -static-libstdc++
 
 
 SOURCES += main.cpp \
@@ -77,6 +77,7 @@ LIBS += $$ICU_PATH/libicudata.a
 
 LIBS += -ldl
 
+LIBS += -static-libstdc++
 
 #LIBS += $$BOOST_PATH/libarmadillo.a
 
